@@ -1,0 +1,26 @@
+{% extends "template-base.stencil" %}
+
+{% block additional-head %}
+    <style>
+        hr {
+            border-top: 1px solid #eee !important;
+        }
+    </style>
+    {% block even-more-head %}{% endblock %}
+{% endblock %}
+
+{% block header %}
+    <header class="masthead" style="background-image: url('/public/img/bg-motherboard.jpg')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="site-heading">
+                        <h1>{% block heading %}{% endblock %}</h1>
+                        <hr>
+                        <span class="subheading">{% block subheading %}{% endblock %}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock %}

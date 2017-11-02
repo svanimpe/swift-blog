@@ -1,0 +1,66 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Reminders, a JavaFX and JPA example application with custom styles, icons by FontAwesome and interaction with the Google Maps JavaScript API.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        Reminders was my attempt at a serious yet fun JavaFX application.
+        It was really popular when it was released due to its many cool features:
+    </p>
+    <ul>
+        <li>JPA is used for persistence, together with bean validation to check constraints before persisting an entity.</li>
+        <li><a href="https://fortawesome.github.io/Font-Awesome/">FontAwesome</a> is used for its cool icons.
+            They look great and because they are text, you can easily change their size or color.</li>
+        <li>CSS is used to completely change the look and feel of ListView and Button nodes.</li>
+        <li>It has neat dialog windows. The code for these should be pretty reusable.</li>
+        <li>It includes a location picker written in JavaScript, but seamlessly incorporated into JavaFX thanks to the WebView.</li>
+        <li>It uses <a href="http://jfxtras.org">JFxtras</a> for its CalendarTextField which, truth be told, works great but looks hella-ugly.</li>
+    </ul>
+
+    <h2 class="section-heading">Screenshots</h2>
+    <p>
+        <img class="img-fluid img-thumbnail" src="/public/img/blog/reminders-main.png" alt="Screenshot">
+    </p>
+    <p>
+        <img class="img-fluid img-thumbnail" src="/public/img/blog/reminders-reminder.png" alt="Screenshot">
+    </p>
+    <p>
+        <img class="img-fluid img-thumbnail" src="/public/img/blog/reminders-location.png" alt="Screenshot">
+    </p>
+    <p>
+        <img class="img-fluid img-thumbnail" src="/public/img/blog/reminders-bug.png" alt="Screenshot">
+    </p>
+    <h2 class="section-heading">Download</h2>
+    <p>
+        The source code is available on <a href="https://github.com/svanimpe/fx-reminders">GitHub</a>.
+    </p>
+    <h2 class="section-heading">Setup</h2>
+    <p>
+        First you'll need a database to run this application. There are two ways to get one:
+    </p>
+    <ol>
+        <li>
+            In NetBeans, go to the <code>Services</code> window. Under <code>Databases</code>, right-click <code>Java&nbsp;DB</code> and create a new database with the following settings:
+            <ul>
+                <li>Name: <code>Reminders</code></li>
+                <li>Username: <code>APP</code></li>
+                <li>Password: <code>APP</code></li>
+            </ul>
+        </li>
+        <li>
+            Create your own empty database and edit <code>persistence.xml</code> to use this database.
+            Make sure you add the correct JDBC driver to the project.
+        </li>
+    </ol>
+    <p>
+        You should now be able to run the application. The database schema will be created upon first use.
+        Once this is done, you can edit <code>persistence.xml</code> to set the table generation strategy to <code>none</code>.
+    </p>
+    <p>
+        The required libraries are found in the <code>lib</code> folder.
+        You will also need EclipseLink and the Java&nbsp;DB Driver (if you chose option 1), but NetBeans already has those bundled with it. 
+    </p>
+{% endblock %}

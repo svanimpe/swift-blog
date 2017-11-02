@@ -1,0 +1,157 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="A tutorial on how to run GlassFish 4 with MySQL on OpenShift using a DIY cartridge.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        As people have been asking me how I got GlassFish 4 running on OpenShift, I decided to write down everything
+        I learned in the process. I started out by following <a href="http://www.openshift.com/blogs/running-java-apps-in-the-cloud-with-glassfish-and-a-paas">these</a>
+        <a href="https://github.com/openshift-quickstart/openshift-glassfish3-sample">examples</a>, but ran into a lot of trouble along the way.
+        I hope this post can make the process a lot easier for you.
+    </p>
+    <h2 class="section-heading">Prerequisites</h2>
+    <p>
+        First of all: don't even bother trying this on Windows. Use OS X or Linux.
+        Start by creating an <a href="https://www.openshift.com/">OpenShift</a> account.
+        Using their web interface, create a new application with the DIY cartridge and add a MySQL cartridge to it as well.
+        I will refer to this application as <code>yourapp</code> from now on.
+        Lastly, you will need the OpenShift Client Tools, so <a href="https://www.openshift.com/developers/rhc-client-tools-install">install</a> those as well.
+    </p>
+    <p>
+        As for GlassFish, you can download (or clone) my archive from <a href="https://github.com/svanimpe/glassfish-openshift/">GitHub</a>.
+        This is the official GlassFish 4 release, modified in the following ways:
+    </p>
+    <ul>
+        <li>The <code>domain.xml</code> configuration file has been modified to run on OpenShift.</li>
+        <li>It already includes the MySQL driver in <code>domain1/lib</code>.</li>
+    </ul>
+    <p>
+        The archive also contains the <code>start</code> and <code>stop</code> hooks you need.
+    </p>
+    <h2 class="section-heading">Setting up the server</h2>
+    <p>
+        Start by cloning your repository to your local machine:
+    </p>
+    <kbd>
+        rhc git-clone yourapp
+    </kbd>
+    <p>
+        This will create a <code>yourapp</code> directory.
+        Move the files you downloaded (or cloned) into <code>yourapp</code> as follows:
+    </p>
+    <ul>
+        <li>Move the <code>glassfish4</code> directory (the entire directory, not just its contents) into <code>yourapp/diy</code>.</li>
+        <li>Move the <code>start</code> and <code>stop</code> hooks into <code>yourapp/.openshift/action_hooks</code> and check to make sure they're executable.</li>
+    </ul>
+    <p>
+        Finally, add, commit and push the changes you made back to OpenShift:
+    </p>
+    <kbd>
+        cd yourapp<br>
+        git add .<br>
+        git status<br>
+        git commit -m "Added GlassFish"<br>
+        git push
+    </kbd>
+    <p>
+        The push will cause your application to restart and execute the new start hook.
+        Give it a few minutes just to be sure, then check if the server is running at <a href="http://yourapp-youraccount.rhcloud.com">http://yourapp-youraccount.rhcloud.com</a>.
+    </p>
+    <p>
+        I added the <code>git status</code> command in there so you can verify if Git picked up all the changes you made.
+        If not, use <code>git add</code> to add the files Git missed.
+    </p>
+    <p>
+        If this is your first time using Git from the command-line, I recommend you set up your name and email address
+        and change your default editor to something other than <code>vi</code>:
+    </p>
+    <kbd>
+        git config --global user.name "My Name"<br>
+        git config --global user.email my@email.com<br>
+        git config --global core.editor nano
+    </kbd>
+    <h2 class="section-heading">Deploying applications</h2>
+    <p>
+        To deploy an application, simply copy its war into <code>domain1/autodeploy</code>
+        and run the previous commands again to add, commit and push the changes. GlassFish will automatically deploy your application
+        after launch. If you think something went wrong, use <code>ssh</code> to log into your application and look for a
+        <code>your.war_deployed</code> file in the <code>autodeploy</code> directory:
+    </p>
+    <kbd>
+        rhc app ssh yourapp<br>
+        cd $OPENSHIFT_REPO_DIR/<br>
+        cd diy/glassfish4/glassfish/domains/domain1/autodeploy/<br>
+        ls
+    </kbd>
+    <p>
+        If there is no such file, take a look at the server logs to find out what went wrong:
+    </p>
+    <kbd>
+        cd ../logs/<br>
+        cat server.log | tail -n100
+    </kbd>
+    <h2 class="section-heading">Setting up resources</h2>
+    <p>
+        You cannot use the GlassFish administration console with OpenShift.
+        Neither does <code>glassfish-resources.xml</code> seem to be supported. If you need to set up JDBC resources, connection pools,
+        security realms, ... on your server, I recommend you use the following approach:
+    </p>
+    <ul>
+        <li>Set up the resources you need on a local GlassFish server.</li>
+        <li>Take a look at that server's <code>domain.xml</code> to see what changes were made.</li>
+        <li>Make the same changes to <code>domain1/config/domain.xml</code> in <code>yourapp</code>.
+            Usually, this just means adding one or two extra elements.</li>
+        <li>As usual: add, commit and push the changes.</li>
+    </ul>
+    <h2 class="section-heading">Connecting to your MySQL server</h2>
+    <p>
+        Working with your MySQL server on OpenShift is pretty easy once you figure out how to connect to it from MySQL Workbench.
+        Launch Workbench and add a new connection. As you can't connect to MySQL on OpenShift directly, you need to use a TCP/IP over SSH connection.
+        The settings I used for my application can be seen in the following screenshot:
+    </p>
+    <img class="img-fluid img-thumbnail" src="/public/img/blog/glassfish-openshift-1.png" alt="Screenshot">
+    <p>
+        To find the settings you need, use the <code>rhc app show yourapp</code> command. This is what I get for my <code>glassfish</code> application:
+    </p>
+    <pre>MacBook-Air:OpenShift Steven$ rhc app show glassfish
+glassfish @ http://glassfish-svanimpe.rhcloud.com/ (uuid: 5232bc5f500446f41000014c)
+-----------------------------------------------------------------------------------
+  Domain:  svanimpe
+  Created: Sep 13  9:18 AM
+  Gears:   1 (defaults to small)
+  Git URL: ssh://5232bc5f500446f41000014c@glassfish-svanimpe.rhcloud.com/~/git/glassfish.git/
+  SSH:     5232bc5f500446f41000014c@glassfish-svanimpe.rhcloud.com
+
+  diy-0.1 (Do-It-Yourself 0.1)
+  ----------------------------
+    Gears: Located with mysql-5.1
+
+  mysql-5.1 (MySQL Database 5.1)
+  ------------------------------
+    Gears:          Located with diy-0.1
+    Connection URL: mysql://$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/
+    Database Name:  glassfish
+    Password:       supersecret
+    Username:       adminHWvBmju</pre>
+    <p>
+        The output will give you all of the values you need except for the MySQL hostname and port, as the command only
+        shows the environment variables and not the actual values. To find out those values, <code>ssh</code> into your application and
+        use the <code>env</code> and <code>grep</code> commands:
+    </p>
+    <pre>[glassfish-svanimpe.rhcloud.com 5232bc5f500446f41000014c]\> env | grep MYSQL
+OPENSHIFT_MYSQL_DIR=/var/lib/openshift/5232bc5f500446f41000014c/mysql/
+OPENSHIFT_MYSQL_DB_PORT=3306
+OPENSHIFT_MYSQL_DB_HOST=127.9.226.130
+OPENSHIFT_MYSQL_DB_PASSWORD=supersecret
+OPENSHIFT_MYSQL_IDENT=redhat:mysql:5.1:0.2.2
+OPENSHIFT_MYSQL_DB_USERNAME=adminHWvBmju
+OPENSHIFT_MYSQL_DB_SOCKET=/var/lib/openshift/5232bc5f500446f41000014c/mysql//socket/mysql.sock
+OPENSHIFT_MYSQL_DB_URL=mysql://adminHWvBmju:asIQ9W3wc26y@127.9.226.130:3306/
+OPENSHIFT_MYSQL_DB_LOG_DIR=/var/lib/openshift/5232bc5f500446f41000014c/mysql//log/</pre>
+    <p>
+        That's it! You should now be up and running with both GlassFish 4 and MySQL.
+    </p>
+{% endblock %}

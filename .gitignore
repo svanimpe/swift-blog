@@ -1,0 +1,7 @@
+.build
+*.xcodeproj
+
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes

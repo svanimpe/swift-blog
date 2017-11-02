@@ -1,0 +1,169 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Reminders, a complete Java EE 7 RESTful webservice example including JPA, Bean Validation, JAX-RS, JSON, CDI, JUnit, Mockito, Arquillian and Maven.
+        HTML5, jQuery and Twitter Bootstrap are used for the front-end.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        This web version of <a href="reminders">Reminders</a> is a large example I made for students taking
+        my course on web application development using Java&nbsp;EE&nbsp;7. It covers the following topics:
+    </p>
+    <ul>
+        <li>JPA:
+            <ul>
+                <li>Basic mapping of attributes, collections and relationships.</li>
+                <li>Automatically generated primary keys.</li>
+                <li>Embeddables.</li>
+                <li>EntityManager.</li>
+                <li>JPQL and named queries.</li>
+            </ul>
+        </li>
+        <li>Bean Validation:
+            <ul>
+                <li>Built-in validation constraints.</li>
+                <li>Custom validation constraints and validators.</li>
+                <li>Validation groups.</li>
+                <li>Manual validation using Validator.</li>
+            </ul>
+        </li>
+        <li>JAX-RS:
+            <ul>
+                <li>Resource creation using <code>@Path</code>, <code>@Consumes</code>/<code>@Produces</code>, <code>@GET</code>/<code>@POST</code>/<code>@PUT</code>/<code>@DELETE</code> and Response.</li>
+                <li>Parameters using <code>@PathParam</code>, <code>@QueryParam</code>, <code>@HeaderParam</code> and <code>@DefaultValue</code>.</li>
+                <li>Exception handling using built-in exception types.</li>
+                <li>Exception mapping.</li>
+                <li>Custom MessageBodyReaders and MessageBodyWriters.</li>
+                <li>Handling image uploads, downloads and storage.</li>
+            </ul>
+        </li>
+        <li>JSON:
+            <ul>
+                <li>JsonReader and JsonWriter.</li>
+                <li>JsonObject(Builder) and JsonArray(Builder).</li>
+            </ul>
+        </li>
+        <li>CDI:
+            <ul>
+                <li><code>@RequestScoped</code>.</li>
+                <li><code>@Inject</code>.</li>
+            </ul>
+        </li>
+        <li>JTA:
+            <ul>
+                <li><code>@Transactional</code>.</li>
+            </ul>
+        </li>
+        <li>Security:
+            <ul>
+                <li>HTTP Basic Authentication using a GlassFish JDBC Realm.</li>
+                <li>Security constraints in <code>web.xml</code>.</li>
+                <li>Checking credentials in JAX-RS using SecurityContext.</li>
+            </ul>
+        </li>
+        <li>Testing:
+            <ul>
+                <li>Basic unit testing using JUnit.</li>
+                <li>Testing with mock objects using Mockito.</li>
+                <li>Integration testing using Arquillian.</li>
+                <li>End-to-end testing using Arquillian and JAX-RS Client API.</li>
+            </ul>
+        </li>
+    </ul>
+    <p>
+        The front-end was built using jQuery and Twitter Bootstrap. It was originally built for an
+        earlier version of the webservice that did not include any authentication.
+        I've updated it to use the API of the new webservice and set it up to use the default administrator
+        account that gets created when you first deploy the application. Other than that, the front-end
+        hasn't been updated so don't take it as an example of best practices.
+    </p>
+    <h2 class="section-heading">Screenshots</h2>
+    <p>
+        <img class="img-fluid img-thumbnail" src="/public/img/blog/reminders-web-1.png" alt="Screenshot">
+    </p>
+    <p>
+        <img class="img-fluid img-thumbnail" src="/public/img/blog/reminders-web-2.png" alt="Screenshot">
+    </p>
+    <p>
+        <img class="img-fluid img-thumbnail" src="/public/img/blog/reminders-web-3.png" alt="Screenshot">
+    </p>
+    <p>
+        <img class="img-fluid img-thumbnail" src="/public/img/blog/reminders-web-4.png" alt="Screenshot">
+    </p>
+    <p>
+        <img class="img-fluid img-thumbnail" src="/public/img/blog/reminders-web-5.png" alt="Screenshot">
+    </p>
+    <p>
+        <img class="img-fluid img-thumbnail" src="/public/img/blog/reminders-web-6.png" alt="Screenshot">
+    </p>
+    <h2 class="section-heading">Download</h2>
+    <p>
+        The source code is available on <a href="https://github.com/svanimpe/reminders">GitHub</a>. Switch to the
+        <code>openshift</code> branch to see the version that is running on OpenShift. The differences in source code
+        are minor and mostly involve changes to URLs.
+    </p>
+    <h2 class="section-heading">Setup</h2>
+    <p>
+        To run this example on a local GlassFish installation, you will need to:
+    </p>
+    <ol>
+        <li>
+            Change the JDBC resource and connection pool settings in <code>sun-resources.xml</code> to point to an empty schema.
+            Make sure you keep the name <code>jdbc/reminders</code>. Also make sure GlassFish has the required driver installed
+            in the <code>lib</code> folder of the domain you're using.
+        </li>
+        <li>
+            Set up the security realm. You can do this via the GlassFish administration console at <a href="http://localhost:4848">http://localhost:4848</a>.
+            Browse to <code>Configurations</code> &gt; <code>server-config</code> &gt; <code>Security</code> &gt; <code>Realms</code> and create a realm with the following settings:
+            <ul>
+                <li>Realm Name: <code>remindersRealm</code></li>
+                <li>Class Name: <code>com.sun.enterprise.security.ee.auth.realm.jdbc.JDBCRealm</code></li>
+                <li>JAAS Context: <code>jdbcRealm</code></li>
+                <li>JNDI: <code>jdbc/reminders</code></li>
+                <li>User Table: <code>USER_PASSWORD</code></li>
+                <li>User Name Column: <code>USERNAME</code></li>
+                <li>Password Column: <code>PASSWORD</code></li>
+                <li>Group Table: <code>USER_ROLES</code></li>
+                <li>Group Table User Name Column: <code>USERNAME</code></li>
+                <li>Group Name Column: <code>ROLES</code></li>
+                <li>Password Encryption Algorithm: <code>SHA-256</code></li>
+            </ul>
+        </li>
+        <li>Change the <code>IMAGES_BASE_DIR</code> in the Utilities class to point to an existing directory on your machine.</li>
+        <li>Copy the <code>default.png</code> image (it's included in the files used for testing) to that directory.</li>
+        <li>Deploy.</li>
+    </ol>
+    <p>
+        The application should now be running on <a href="http://localhost:8080/reminders">http://localhost:8080/reminders</a>.
+        The webservice can be found at <a href="http://localhost:8080/reminders/api">reminders/api</a>,
+        its API documentation at <a href="http://localhost:8080/reminders/docs">reminders/docs</a>.
+    </p>
+    <p>
+        The database schema will be created when you first deploy the application.
+        Once this is done, you can edit <code>persistence.xml</code> to set the table generation strategy to <code>none</code>.
+    </p>
+    <h2 class="section-heading">Testing</h2>
+    <p>
+        To enable the included tests, modify <code>pom.xml</code> to set <code>&lt;skipTests&gt;</code> to <code>false</code>.
+        The tests will connect to your database so make sure you modify <code>test-glassfish-resources.xml</code>
+        in the same way you modified <code>sun-resources.xml</code>.
+        It's best to use a separate schema for your tests as every run of the tests will drop and create the generated tables.
+        The tests will run on an embedded GlassFish server. I did not change the ports so make sure GlassFish is not already running
+        or the embedded server will not be able to start. The test files include a <code>domain.xml</code> configuration file for the embedded server.
+        This configuration file already includes the security realm so no setup is required. Upon running the tests, you should see 126 green lights.
+        This is a complete test suite for the Credentials and Users resources, testing every aspect from simple business logic to
+        validation, persistence and complete use case scenario's. The Lists and Reminders resources don't have test suites yet,
+        but as they are very similar to the Users resource, you might want to try writing these tests yourself, as an exercise.
+    </p>
+    <p>
+        To interact directly with the webservice, I recommend you use <a href="http://www.getpostman.com">Postman</a>.
+    </p>
+    <h2 class="section-heading">OpenShift</h2>
+    <p>
+        The webservice powering this application is also running on <a href="https://www.openshift.com">OpenShift</a>,
+        at <a href="https://glassfish-svanimpe.rhcloud.com/reminders/">https://glassfish-svanimpe.rhcloud.com/reminders/</a>.
+        See <a href="glassfish-openshift.html">this post</a> to find out how you can run GlassFish 4 on OpenShift.
+    </p>
+{% endblock %}

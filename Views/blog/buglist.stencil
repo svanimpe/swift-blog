@@ -1,0 +1,25 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="BugList, a basic JavaFX example covering properties, binding, layout panes, MVC and CSS.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        This example replaced <a href="ogly">Ogly</a> in my JavaFX workshops. It covers the same topics
+        but adds layout panes. 
+    </p>
+    <h2 class="section-heading">fx:root</h2>
+    <p>
+        Unlike <a href="ogly">Ogly</a>, I did not rework this example to use the <code>fx:root</code> construct.
+        While I do recommend using <code>fx:root</code>, I wanted to keep examples of both approaches online so you can
+        compare them side by side. This example also contains a handcoded version of the GUI. To really understand
+        JavaFX, I recommend you start by building all your GUIs in code and only start using FXML when you understand
+        how everything fits together.
+    </p>
+    <h2 class="section-heading">Download</h2>
+    <p>
+        The source code is available on <a href="https://github.com/svanimpe/fx-buglist">GitHub</a>.
+    </p>
+{% endblock %}

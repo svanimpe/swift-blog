@@ -1,0 +1,29 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Ogly, a basic JavaFX example covering properties, binding, MVC and CSS.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        This was the second of <a href="guybrush">two</a> examples I used to teach my first JavaFX workshop.
+        This example covers:
+    </p>
+    <ul>
+        <li>properties and binding.</li>
+        <li>MVC with FXML and Scene Builder.</li>
+        <li>CSS.</li>
+    </ul>
+    <h2 class="section-heading">fx:root</h2>
+    <p>
+        When updating this example for JDK 8, I decided to rework it and use the <code>fx:root</code> construct described
+        <a href="https://docs.oracle.com/javafx/2/api/javafx/fxml/doc-files/introduction_to_fxml.html#custom_components">here</a>.
+        I very much prefer this approach as it hides the implementation of a component and allows you to easily mix and match
+        handcoded components with ones loaded from FXML. For a different approach, see <a href="buglist">BugList</a>.
+    </p>
+    <h2 class="section-heading">Download</h2>
+    <p>
+        The source code is available on <a href="https://github.com/svanimpe/fx-ogly">GitHub</a>.
+    </p>
+{% endblock %}

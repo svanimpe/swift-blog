@@ -1,0 +1,32 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Pong, a classic game programming example in JavaFX.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        After covering game loops in the <a href="game-loops">previous</a> <a href="game-loops-fx">posts</a>,
+        I wanted to continue my explorations into game programming and build a complete game.
+        What better game to start with than good old Pong?
+    </p>
+    <img class="img-fluid img-thumbnail" src="/public/img/blog/pong.png" alt="Screenshot">
+    <p>
+        The topics covered in this example are:
+    </p>
+    <ul>
+        <li>A game loop with variable time steps.</li>
+        <li>Game objects.</li>
+        <li>Keyboard controls.</li>
+        <li>Collision detection and 'faked physics'.</li>
+        <li>A simple AI to control the opponent paddle.</li>
+        <li>Multiple screens and switching between them.</li>
+        <li>Sound effects.</li>
+        <li>Scaling the screen while respecting the aspect ratio, using letter- and pillarboxing.</li>
+    </ul>
+    <h2 class="section-heading">Download</h2>
+    <p>
+        The source code is available on <a href="https://github.com/svanimpe/fx-pong">GitHub</a>.
+    </p>
+{% endblock %}

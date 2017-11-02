@@ -1,0 +1,33 @@
+{% extends "template-main.stencil" %}
+
+{% block description %}
+    <meta name="description" content="A blog for computer science students and enthusiasts by Steven Van Impe.">
+{% endblock %}
+
+{% block title %}{{ block.super }} - Blog{% endblock %}
+
+{% block heading %}Blog{% endblock %}
+
+{% block subheading %}For those who start counting at zero{% endblock %}
+
+{% block content %}
+    {% for post in posts %}
+        <div class="post-preview">
+            <a href="blog/{{ post.name }}">
+                <h2 class="post-title">{{ post.title }}</h2>
+                <h3 class="post-subtitle">{{ post.subtitle }}</h3>
+            </a>
+            <p class="post-meta">
+                {% if post.updated %}
+                    Originally posted on {{ post.created }}<br>
+                    Updated on {{ post.updated }}
+                {% else %}
+                    Posted on {{ post.created }}
+                {% endif %}
+            </p>
+        </div>
+        {% if not forloop.last %}
+            <hr>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Decoding HTML character references in Swift.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        When playing around with the <a href="http://www.boardgamegeek.com/wiki/page/BGG_XML_API2">BoardGameGeek XML API</a>,
+        one of the (many) things that bothered me was that the text it returns contains HTML character references, like
+        <code>&amp;mdash;</code> or <code>&amp;#10;</code>.
+        I didn't feel like including WebViews in my application just to render some text, so I started looking
+        for ways to decode these references. All I could find were some outdated and incomplete Objective-C solutions, so I
+        decided to write my own.
+    </p>
+    <h2 class="section-heading">HTML character references</h2>
+    <p>
+        HTML character references come in three forms:
+    </p>
+    <ul>
+        <li><code>&amp;name;</code>, where <code>name</code> is a character name (also called an entity),</li>
+        <li><code>&amp;#d;</code>, where <code>d</code> is a decimal code point,</li>
+        <li><code>&amp;#xh;</code>, where <code>h</code> is a hexadecimal code point.</li>
+    </ul>
+    <p>
+        A complete list of character names is included in the <a href="https://www.w3.org/TR/html5/syntax.html#named-character-references">HTML 5 specification</a>.
+        This list of character names and their corresponding values is also available in <a href="https://www.w3.org/TR/html5/entities.json">JSON</a>.
+    </p>
+    <h2 class="section-heading">Cleaning up</h2>
+    <p>
+        The first thing I did was clean up that JSON file. It includes mappings for character references that are missing the trailing
+        semi-colon (I really didn't feel like parsing those) and contains more information that I needed. All I really needed was a
+        <code>[String: String]</code> dictionary mapping entities to their corresponding Unicode characters. I wrote the following
+        Bash script to take care of that:
+    </p>
+    <pre><code class="bash">#!/bin/bash
+
+# Restore the opening brace that will be removed by the filter command.
+echo '{' > output.json
+
+# Filter out entities that do not contain a trailing semi-colon.
+sed -En 's/&amp;[a-zA-Z]+;/&amp;/p' < entities.json |
+
+# Simplify the values from a full object to a single string.
+sed -E 's/{.*("[\\u0-9A-F]+") }/\1/' >> output.json
+
+# Restore the closing brace that was removed by the filter command.
+echo '}' >> output.json</code></pre>
+    <p>
+        Note that this script is made for OS X (or FreeBSD). On Linux, replace the <code>E</code> flag with <code>r</code>.
+        If you don't feel like running the script yourself, you can find the resulting output (renamed to <code>entities.json</code>)
+        <a href="/public/files/entities.json">here</a>.
+    </p>
+    <h2 class="section-heading">Find and replace</h2>
+    <p>
+        Decoding the character references was pretty easy once I had a complete list of entities. The following extension
+        on <code>String</code> contains a method that does a single pass over the text and decodes every character reference it encounters.
+        The code should be self-explanatory. Note that, other than reading in the <code>entities.json</code> file, this code is pure Swift
+        and does not rely on Foundation.
+    </p>
+    <pre><code class="swift">import Foundation
+
+extension String {
+
+    mutating func decodeHtmlCharacterReferences() {
+        var decodedString = ""
+        var reference = ""
+        var inReference = false
+        for character in self.characters {
+            if inReference {
+                reference.append(character)
+                if character == ";" {
+                    inReference = false
+                    if let entity = entities[reference] {
+                        decodedString.appendContentsOf(entity)
+                    } else if reference.hasPrefix("&amp;#x") {
+                        let start = reference.startIndex.advancedBy(3)
+                        let end = reference.endIndex.predecessor()
+                        if let codePoint = Int(reference.substringWithRange(start..&lt;end), radix: 16) {
+                            decodedString.append(Character(UnicodeScalar(codePoint)))
+                        }
+                    } else if reference.hasPrefix("&amp;#") {
+                        let start = reference.startIndex.advancedBy(2)
+                        let end = reference.endIndex.predecessor()
+                        if let codePoint = Int(reference.substringWithRange(start..&lt;end)) {
+                            decodedString.append(Character(UnicodeScalar(codePoint)))
+                        }
+                    }
+                }
+            } else if character == "&amp;" {
+                reference = "&amp;"
+                inReference = true
+            } else {
+                decodedString.append(character)
+            }
+        }
+        self = decodedString
+    }
+}
+
+private let entities: [String: String] = {
+    let fileName = NSBundle.mainBundle().pathForResource("entities", ofType: "json")!
+    let fileData = NSData(contentsOfFile: fileName)!
+    return try! NSJSONSerialization.JSONObjectWithData(fileData, options: NSJSONReadingOptions()) as! [String: String]
+}()</code></pre>
+    <p>
+        That's it! Free free to reuse this code and modify it to fit your needs.
+    </p>
+{% endblock %}

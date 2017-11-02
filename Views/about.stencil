@@ -1,0 +1,235 @@
+{% extends "template-main.stencil" %}
+
+{% block description %}
+    <meta name="description" content="About Steven Van Impe.">
+{% endblock %}
+
+{% block title %}{{ block.super }} - About the author{% endblock %}
+
+{% block even-more-head %}
+    <link href="/public/css/timeline.css" rel="stylesheet">
+{% endblock %}
+
+{% block heading %}About the author{% endblock %}
+
+{% block subheading %}Steven Van Impe{% endblock %}
+
+{% block content %}
+    <p>
+        Although I have a broad interest in computer science, my main focus is on education. I love taking things apart, studying
+        how they work and creating new things. But even more than that, I love passing on knowledge. That is why I chose a career
+        in education. Luckily there are plenty of school holidays I can spend on pursuing my interests, learning new skills and
+        creating new teaching materials.
+    </p>
+    <p>
+        Below you'll find a summary of my work, education and other computer science related activities. If you have any questions,
+        feel free to contact me on <a href="https://twitter.com/svanimpe">Twitter</a>.
+    </p>
+    <h1>
+        Work and education
+    </h1>
+    <ul class="timeline">
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/rw.png" alt="Ray Wenderlich logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>February, 2016 (ongoing)</strong><br>
+                    Joined the Swift team at <a href="http://raywenderlich.com">Ray Wenderlich</a> as a technical editor.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/pov.png" alt="Provincie Oost-Vlaanderen logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>February, 2016 (ongoing)</strong><br>
+                    Started teaching evening classes at <a href="http://www.hetperspectief.net">CVO Het Perspectief</a>,
+                    teaching programming with Swift to complete beginners.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/pantarhei.png" alt="Panta Rhei logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>October, 2012</strong><br>
+                    Started teaching evening classes at <a href="http://avondschool.be">CVO Panta Rhei</a>.
+                    I taught there for a year, in combination with my day job at <a href="http://www.hogent.be/">HoGent</a>.
+                    The main focus of my courses was on Java and Java&nbsp;EE.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/hogent.png" alt="HoGent logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>October, 2010 (ongoing)</strong><br>
+                    Started teaching computer science at the University College of Ghent (<a href="http://www.hogent.be/">HoGent</a>).
+                    I still teach there today and am currently focusing on Swift and iOS (previously Java and Java&nbsp;EE).
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/math.png" alt="Blackboard with mathematics">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>November, 2008</strong><br>
+                    Quit my job at <a href="http://www.ugent.be">Ghent University</a> to start teaching mathematics at high school.
+                    I loved working with kids and still consider returning to high school sometime in the future.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/ugent.png" alt="UGent logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>October, 2006</strong><br>
+                    Started work as a scientific aid at <a href="http://www.ugent.be">Ghent University</a>
+                    where I developed a learning environment for students of numerical analysis.
+                    I also briefly researched possible applications of machine learning in the field of network recovery.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/ugent.png" alt="UGent logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>September, 2006</strong><br>
+                    Graduated from the teacher training programme at <a href="http://www.ugent.be">Ghent University</a>.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/ugent.png" alt="UGent logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>July, 2005</strong><br>
+                    Graduated from <a href="http://www.ugent.be">Ghent University</a> with a master's degree in computer science,
+                    majoring in software development.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/graduation.png" alt="Graduation cap">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>June, 2001</strong><br>
+                    Graduated from high school where I majored in mathematics and science.
+                </p>
+            </div>
+        </li>
+    </ul>
+    <h1>
+        Other activities
+    </h1>
+    <ul class="timeline">
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/swift.png" alt="Swift logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>September, 2014</strong><br>
+                    Gave a short talk on Swift and education at <a href="http://www.meetup.com/swiftlondon/">Swift London</a>.
+                    This was my first time speaking outside of a school setting, my first time speaking abroad,
+                    my first time speaking in English and a lot of fun.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/robovm.png" alt="RoboVM logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>May, 2014</strong><br>
+                    Experimented with an early alpha of <a href="http://www.robovm.com">RoboVM</a>,
+                    resulting in <a href="/blog/pong-ios">Pong</a>,
+                    the first open source JavaFX application on the iOS App Store (and only the second one ever).
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/appscity.png" alt="AppsCity logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>May, 2014</strong><br>
+                    Co-organised <a href="http://appscity.be">Apps City</a>, a local conference on mobile applications.
+                    I ran and supervised the <a href="http://www.nieuwsblad.be/cnt/bltve_20140517_001">hack-a-thon</a>
+                    during my first (and hopefully last) 30h working day.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/blogger.png" alt="Blogger logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>November, 2012</strong><br>
+                    Started a blog titled &quot;A Sip Of Java&quot;, the predecessor to this site.
+                    I started the blog mainly to share some of my teaching materials with others and was surprised to see
+                    how quickly it became popular internationally. It reached 12.000 pageviews when it turned one and 35.000
+                    when it turned two, which was about the time I started work on this site.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/hogent.png" alt="HoGent logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>October, 2012</strong><br>
+                    Joined the applied computer science programme committee at <a href="http://www.hogent.be/">HoGent</a>.
+                    Resigned after 2 years, concluding my time was better spent teaching.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/netbeans.png" alt="NetBeans logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>June, 2012</strong><br>
+                    Wrote a <a href="http://plugins.netbeans.org/plugin/43281/formatted-text-copy">plugin</a> for NetBeans
+                    to allow me to copy code to the clipboard as rich text (to preserve syntax coloring).
+                    People seemed to like it.
+                </p>
+            </div>
+        </li>
+
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/libburn.png" alt="Libburnia logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>October, 2004</strong><br>
+                    Worked on <a href="http://libburnia-project.org">Libisofs</a> for a while, as part of my master's thesis.
+                </p>
+            </div>
+        </li>
+    </ul>
+{% endblock %}

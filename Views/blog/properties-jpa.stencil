@@ -1,0 +1,159 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Find out how to use persistent JavaFX properties in JPA entity classes.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        This post tries to find an answer to the following question: can I use JavaFX properties in domain classes that have to be persisted using JPA?
+        That is: can I build domain classes that use JavaFX properties instead of regular properties,
+        yet are persistable like regular JPA entity classes? After a bit of trial and error, I came up with the following answer:
+        it's not that hard, if you understand JPA's property access.
+    </p>
+    <h2 class="section-heading">Property access vs. field access</h2>
+    <p>
+        JPA has two ways of accessing persistent attributes:
+    </p>
+    <ol>
+        <li>Field access: reading and writing attributes directly through reflection.</li>
+        <li>Property access: reading and writing attributes through their accessor (getter and setter) methods.</li>
+    </ol>
+    <p>
+        If you do not explicity set an access type, JPA will figure out what to do:
+    </p>
+    <ul>
+        <li>If you annotate your fields, JPA will use field access.</li>
+        <li>If you annotate your getter methods, JPA will use property access.</li>
+        <li>If you annotate both fields and getter methods, you're asking for trouble.</li>
+    </ul>
+    <p>
+        If you want to use property access, do the following:
+    </p>
+    <ul>
+        <li>Do not annotate any fields.</li>
+        <li>Provide both a getter and a setter for each property you want to persist. These methods have to be either protected or public.</li>
+        <li>Place all annotations on the getter methods.</li>
+    </ul>
+    <h2 class="section-heading">A simple example</h2>
+    <p>
+        The following example shows how to map simple Employee and Department classes, including a unidirectional
+        many-to-one relationship between them. The resulting database schema is exactly the same as if you had used regular properties.
+    </p>
+    <pre><code class="java">@Entity
+public class Department {
+    
+    private final StringProperty name = new SimpleStringProperty();
+
+    @Id
+    public String getName() {
+        return name.get();
+    }
+
+    public void setName(String value) {
+        name.set(value);
+    }
+
+    public StringProperty nameProperty() {
+        return name;
+    }
+}
+
+@Entity
+public class Employee {
+    
+    private final IntegerProperty id = new SimpleIntegerProperty();
+
+    @Id @GeneratedValue
+    public int getId() {
+        return id.get();
+    }
+
+    public void setId(int value) {
+        id.set(value);
+    }
+
+    public IntegerProperty idProperty() {
+        return id;
+    }
+    
+    private final StringProperty name = new SimpleStringProperty();
+
+    public String getName() {
+        return name.get();
+    }
+
+    public void setName(String value) {
+        name.set(value);
+    }
+
+    public StringProperty nameProperty() {
+        return name;
+    }
+    
+    private final ObjectProperty&lt;Department&gt; department = new SimpleObjectProperty&lt;&gt;();
+
+    @ManyToOne
+    public Department getDepartment() {
+        return department.get();
+    }
+
+    public void setDepartment(Department value) {
+        department.set(value);
+    }
+
+    public ObjectProperty&lt;Department&gt; departmentProperty() {
+        return department;
+    }
+}</code></pre>
+    <h2 class="section-heading">Mixing access types</h2>
+    <p>
+        If you only want a few JavaFX properties in your entity classes, you could go for mixed access types. For example:
+    </p>
+    <pre><code class="java">@Entity
+@Access(AccessType.FIELD)
+public class Employee {
+    
+    @Id @GeneratedValue
+    private int id;
+    
+    @Transient
+    private final StringProperty name = new SimpleStringProperty();
+
+    @Access(AccessType.PROPERTY)
+    public String getName() {
+        return name.get();
+    }
+
+    public void setName(String value) {
+        name.set(value);
+    }
+
+    public StringProperty nameProperty() {
+        return name;
+    }
+    
+    @ManyToOne
+    private Department department;
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+}</code></pre>
+    <p>
+        Note that:
+    </p>
+    <ul>
+        <li>the default access type for this class is explicity set to field access.</li>
+        <li>the access type for the name property is changed from the default to property access.</li>
+        <li>the underlying StringProperty attribute is marked as transient, otherwise JPA would persist both the property and the field.</li>
+    </ul>
+    <p>
+        Update: James Denvir has more on this on <a href="http://www.marshall.edu/genomicjava/2014/05/09/one-bean-to-bind-them-all/">his blog</a>.
+    </p>
+{% endblock %}

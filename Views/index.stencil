@@ -1,0 +1,21 @@
+{% extends "template-main.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Books and blog posts for computer science students and enthusiasts by Steven Van Impe.">
+{% endblock %}
+
+{% block heading %}Ones &amp; Zeros{% endblock %}
+
+{% block subheading %}Books and blog by Steven Van Impe{% endblock %}
+
+{% block content %}
+    <h2>Latest updates</h2>
+    <p>
+        The <a href="https://store.raywenderlich.com/products/swift-apprentice">Swift Apprentice</a> is out now, updated for Swift 4.
+    </p>
+    <p>
+        For an overview of books I've worked on or am working on, see <a href="/books">Books</a>.<br>
+        For shorter articles, see <a href="/blog">Blog</a>.<br>
+        If you have no idea who I am, see <a href="/about">About</a>.
+    </p>
+{% endblock %}

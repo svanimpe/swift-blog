@@ -1,0 +1,30 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Jumpman, a JavaFX game in the style of Super Mario Bros to illustrate the State design pattern.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        This was my first ever JavaFX application. Its intended purpose was to:
+    </p>
+    <ul>
+        <li>help me learn JavaFX, especially properties and bindings.</li>
+        <li>have fun programming a game with sprites, physics and side-scrolling.</li>
+        <li>apply the State design pattern in a comprehensive example.</li>
+    </ul>
+    <p>
+        The game contains a massive 2-line 'physics engine' to update all the game objects. This update triggers
+        bindings that adjust the positions of all the nodes on screen. Keyboard input is fed into a state machine that models
+        the movements of the playable character, like walking, running, braking or jumping.
+    </p>
+    <p>
+        This was a really fun project to work on and is ever so popular with students.
+        If you enjoy casual game programming or want to learn more about JavaFX or the State pattern, have a look at the source code!
+    </p>
+    <h2 class="section-heading">Download</h2>
+    <p>
+        The source code is available on <a href="https://github.com/svanimpe/fx-jumpman">GitHub</a>.
+    </p>
+{% endblock %}

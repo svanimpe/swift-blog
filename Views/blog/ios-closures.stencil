@@ -1,0 +1,183 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Using closures as event handlers in iOS.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Target-action</h2>
+    <p>
+        If you're new to iOS development, you might be excited by the prospect of writing apps using Apple's awesome new Swift
+        programming language. That excitement might take a hit once you find out that the frameworks you'll be using are much
+        older than Swift and don't fit this new language at all. This week, I encountered yet another example of this: the so-called
+        <em>target-action</em> pattern. This is the pattern used for event handling on iOS. Instead of assigning an object (conforming
+        to some protocol or being of some function type) as an event handler, you specify a target object and an action, the name
+        of a method to call on that object:
+    </p>
+    <pre><code class="swift">control.addTarget(someObject, action: "someMethod", forControlEvents: .SomeEvent)</code></pre>
+    <p>
+        Wait, what, is that a <code>String</code> instead of a typed object? That's not at all what you'd expect to be doing in Swift.
+        Not only does this approach feel outdated, it has severe limitations. The following example should illustrate this.
+    </p>
+    <h2 class="section-heading">Do it yourself</h2>
+    <p>
+        In this example, we generate a list of views, in code, based on a collection of objects in a model. A do-it-yourself
+        <code>UITableView</code> if you wish. The model consists of a simple list of names, a <code>[String]</code>. When the view
+        loads, it should show a list of names, with a button next to each of them. Clicking a button should show a greeting that
+        uses the name that is next to the button. The resulting application should look as follows.
+    </p>
+    <img class="img-fluid img-thumbnail center-block" alt="Screenshot" src="/public/img/blog/ios-closures.png">
+    <p>
+        The code for this view's controller is as follows. Note that I simplified and summarized this code.
+        For the full source code, download the Xcode project from <a href="https://github.com/svanimpe/ios-closures">GitHub</a>.
+    </p>
+    <pre><code class="swift">let names = ["Alice", "Bob", "Charlie", "David"]
+
+override func viewDidLoad() {
+  for name in names {
+    /* Create a label and a button, and add them to the view */
+    button.addTarget(self, action: "showGreeting", forControlEvents: .TouchUpInside)
+  }
+}
+
+func showGreeting() {
+  /* Update the greeting */
+}</code></pre>
+    <p>
+        Unfortunately, this code doesn't work. The <code>showGreeting</code> method has no way of knowing what the name
+        next to the button is. While there are ways to work around this problem, none of these workarounds result
+        in elegant code. The cause of this problem lies with the target-action pattern. All this pattern allows us to tell the
+        button is what method to call. Other than the sender of the action and some event object, this method has
+        no way of knowing what happened. If we could use a closure instead of an action method, that closure could
+        capture the current <code>name</code> and use it to update the greeting.
+    </p>
+    <p>
+        And so I put on my thinking cap and tried to come up with a way to use closures as event handlers for
+        <code>UIControl</code>s. What follows is a summary of the steps I took in designing a utility class that adds
+        support for closures to <code>UIControl</code>.
+    </p>
+    <h2 class="section-heading">Wrap it</h2>
+    </p>
+        Since there is no way around the target-action pattern, we need to wrap the closure in a target object and provide
+        an action method. Let's start with the following class:
+    </p>
+    <pre><code class="swift">class ClosureHandler: NSObject
+{
+  private let code: Void -> Void
+
+  init(code: Void -> Void) {
+    self.code = code
+    super.init()
+  }
+
+  func action() {
+    code()
+  }
+}</code></pre>
+    <p>
+        This class allows us to re-write our <code>addTarget</code> command as follows:
+    </p>
+    <pre><code class="swift">button.addTarget(ClosureHandler(code: { /* Update greeting */ }), action: "action", forControlEvents: .TouchUpInside)</code></pre>
+    <p>
+        Our <code>ClosureHandler</code> is now used as the target object and its <code>action</code> method will execute the closure
+        we provided in the initializer. The closure can capture the local variable <code>name</code> and use it to update the
+        greeting, solving our problem. Awesome!
+    <p>
+        The code can be made more concise by giving the class a shorter name (let's pick <code>λ</code>) and using
+        trailing closure syntax.
+    </p>
+    <pre><code class="swift">button.addTarget(λ { /* Update greeting */ }, action: "action", forControlEvents: .TouchUpInside)</code></pre>
+    <p>
+        Further enhancements can be made by extending <code>UIControl</code> to add a more Swift-like method:
+    </p>
+    <pre><code class="swift">public extension UIControl
+{
+  public func addAction(controlEvents: UIControlEvents, action: Void -> Void) {
+    addTarget(λ(code: action), action: "action", forControlEvents: controlEvents)
+  }
+}</code></pre>
+    <p>
+        With this extension in place, our <code>λ</code> class now does its work behind the scenes.
+        Adding event handlers can now be done as follows:
+    </p>
+    <pre><code class="swift">button.addAction(controlEvents: .TouchUpInside) {
+  /* Update greeting */
+}</code></pre>
+    <h2 class="section-heading">Retain it</h2>
+    <p>
+        If you tried out the previous technique, you will have noticed that nothing seems to happen when you click the button.
+        To find out why, read the documentation for the <code>addTarget:action:forControlEvents:</code> method.
+        The documentation tells us that this method does not retain the target object, meaning our <code>λ</code> objects will
+        die long before they get a chance to do their job. Poor objects.
+    </p>
+    <p>
+        An obvious solution to this problem is to store the objects somewhere
+        in the controller class, but that solution would be tedious. Surely, we can do better.
+        An ideal solution would not require any additional work from the user of our <code>λ</code> class.
+        A possible solution would be to make <code>λ</code> a subclass of <code>UIView</code> and store a <code>λ</code> object
+        as a subview of the control that targets it, but I consider that an ugly hack.
+        Since  don't want the class that uses a <code>λ</code> object to have to retain it
+        and we have no clean way of storing it inside the control that uses it, the only elegant solutions seems to require that
+        the <code>λ</code> object retain itself. This is possible by deliberately introducing a reference cycle:
+    </p>
+    <pre><code class="swift">class λ: NSObject
+{
+  private let code: Void -> Void
+  private var keepAlive: (Void -> Void)?
+
+  init(code: Void -> Void) {
+    self.code = code
+    super.init()
+    keepAlive = { self }
+  }
+
+  func action() {
+    code()
+  }
+}</code></pre>
+    <p>
+        The <code>keepAlive</code> closure captures a reference to <code>self</code>, thereby retaining it.
+        Our <code>λ</code> objects will now stay in memory. If you're wondering why <code>keepAlive</code>
+        is optional: this closure needs to capture <code>self</code> so it can only be initialized after
+        <code>self</code> is available, which is in phase two of two-phase initialization. The property still
+        needs a value in phase one - otherwise we aren't allowed to enter phase two - and I chose to
+        set it to <code>nil</code>.
+    </p>
+    <p>
+        In the next section, I'll discuss another reason why I chose to make <code>keepAlive</code> optional.
+    </p>
+    <h2 class="section-heading">Release it</h2>
+    <p>
+        While the <code>keepAlive</code> property does solve our problem of keeping <code>λ</code> objects
+        in memory, it does introduce a reference cycle, retaining the <code>λ</code> object indefinitely. We would
+        sleep better at night knowing <code>λ</code> objects are released when they are no longer needed.
+        We can achieve this by introducing a symmetrical <code>removeAction(controlEvents:)</code> method.
+        This method provides an alternative for <code>removeTarget:action:forControlEvents:</code> as well
+        as a time and place to solve our reference cycle problem.
+    </p>
+    <p>
+        First, we add a <code>remove</code> method to class <code>λ</code> in which we set <code>keepAlive</code>
+        to <code>nil</code>, breaking the reference cycle and releasing the <code>λ</code> object.
+    </p>
+    <pre><code class="swift">func remove() {
+  keepAlive = nil
+}</code></pre>
+    <p>
+        Next, we add a <code>removeAction(controlEvents:)</code> method to our <code>UIControl</code> extension.
+        This method will remove all <code>λ</code> objects from the control's dispatch table as well as release them.
+    </p>
+    <pre><code class="swift">public func removeAction(controlEvents: UIControlEvents) {
+  for target in allTargets() {
+    if let target = target as? λ {
+      removeTarget(target, action: "action", forControlEvents: .TouchUpInside)
+      target.remove()
+    }
+  }
+}</code></pre>
+    <h2 class="section-heading">Further enhancements</h2>
+    <p>
+        Further enhancements can be made by giving each <code>λ</code> object a name. This would allow us to selectively remove
+        <code>λ</code> objects from a control's dispatch table, instead of removing them all at once. This enhancement
+        has been implemented in the example on <a href="https://github.com/svanimpe/ios-closures">GitHub</a>.
+    </p>
+{% endblock %}

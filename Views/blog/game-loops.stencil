@@ -1,0 +1,341 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Game loops in theory and practice and how to program them in JavaFX.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        In an attempt to have some fun, I started reading up on game programming and game loops in particular.
+        This post is a summary of what I learned. I found this topic pretty fascinating and educational and hope you feel the same.
+    </p>
+    <h2 class="section-heading">The basic loop</h2>
+    <p>
+        If you've done any GUI programming at all, you'll know that GUI frameworks are event-driven.
+        This means that the framework doesn't do very much, it simply waits for an event to occur, processes it,
+        then waits for the next one. Games on the other hand tend to use a loop as a heartbeat that moves time forward.
+        The simplest possible game loop looks something like:
+    </p>
+    <pre><code class="java">while (!gameOver)
+{
+    processEvents();
+    updateWorld();
+    renderFrame();
+}</code></pre>
+    <p>
+        As you can probably tell, this loops handles any input that needs handling,
+        moves the state of the game world one step forward in time, then renders this new state on screen.
+    </p>
+    <p>
+        This implementation of the game loop isn't very useful. It simply runs the loop as fast as possible.
+        The result of this is that the faster your machine is, the faster time will move forward in the game.
+        You could end up with a game character walking in slow motion on one machine, while running at the speed of light on another.
+        This approach to a game loop is often called a CPU dependent game loop, for obvious reasons.
+        It could work in situations where the speed of the machine is fixed and known, but that's usually not the case.
+    </p>
+    <p>
+        In what follows we'll explore several possibilities to improve upon this basic approach.
+        Note that while the code examples will be in Java, they are intended only as illustrations and
+        do not cover every single detail or edge case, so they should be viewed as pseudo-code only.
+    </p>
+    <h2 class="section-heading">Variable time steps</h2>
+    <p>
+        Think about this for a while: instead of using a fixed time step (as we did in the basic approach),
+        why not simply measure how much time has passed since the previous iteration of the loop,
+        and use that time difference to update the game world? By synchronising the game time with the real time,
+        the game time will progress at a constant speed, no matter the speed of the machine.
+    </p>
+    <h3>Variable time steps - variable frame rate</h3>
+    <p>
+        A first implementation of this idea could look like:
+    </p>
+    <pre><code class="java"><strong>long previousTime = System.nanoTime();</strong>
+
+while (!gameOver)
+{
+    <strong>long currentTime = System.nanoTime();
+    long elapsedNanos = currentTime - previousTime;
+    double deltaTime = elapsedNanos / 1_000_000_000.0; /* to seconds */</strong>
+
+    processEvents();
+    updateWorld(<strong>deltaTime</strong>);
+    renderFrame();
+
+    <strong>previousTime = currentTime;</strong>
+}</code></pre>
+    <p>
+        In this approach the game world is no longer updated with fixed time steps, but with time steps that depend
+        on the actual time that has passed since the previous iteration of the loop. If one machine is able to run
+        this loop 100 times per second, that machine will update the world 100 times with time steps averaging 10ms.
+        If another machine is only able to run the loop 50 times per second, that machine will update the world
+        50 times per second with time steps averaging 20ms. The result is the same on both machines: after 1 second of real time,
+        the game time has advanced by 1 second as well.
+    </p>
+    <p>
+        This approach may seem great at first: not only does the game progress at a constant speed independent
+        of the underlying hardware, the loop actually adjusts the frame rate to the underlying hardware as well as to the current load.
+        The loop runs as fast as possible, but when the load increases (for example: if there are lots of objects that need to be updated),
+        the time steps will increase as well, lowering the frame rate. If the load decreases, the time steps will decrease as well,
+        raising the frame rate.
+    </p>
+    <p>
+        Variable frame rates are not without their issues however, especially when physics are involved:
+    </p>
+    <ul>
+        <li>
+            Low frame rates result in large time steps. Large time steps can cause objects to 'jump' between points,
+            instead of moving smoothly between them. This in turn could result in collisions going undetected,
+            allowing your game objects to pass through one another.
+        </li>
+        <li>
+            High frame rates result in small time steps. As you probably know, floating point numbers only have limited precision,
+            so floating point calculations often involve some sort of rounding error. If the time steps get too small,
+            an unnecessary amount of calculations is performed. This could result in rounding errors accumulating to a point
+            where your game objects end up in the wrong place.
+        </li>
+    </ul>
+    <p>
+        Instead of throwing variable frame rates out the window, let's see if we can address some of these issues.
+    </p>
+    <h3>Variable time steps - variable frame rate with a target frame rate</h3>
+    <p>
+        The first issue we'll address is small time steps as a result of high frame rates. The solution for this is quite simple:
+        impose an upper bound on the frame rate by making the loop wait until a minimum amount of time has passed.
+        This approach looks something like:
+    </p>
+    <pre><code class="java"><strong>final double targetDelta = 0.0166; /* 16.6ms ~ 60fps */</strong>
+long previousTime = System.nanoTime();
+
+while (!gameOver)
+{
+    long currentTime = System.nanoTime();
+    double deltaTime = (currentTime - previousTime) / 1_000_000_000.0; 
+
+    processEvents();
+    updateWorld(deltaTime);
+    renderFrame();
+
+    previousTime = currentTime;
+
+    <strong>double frameTime = (System.nanoTime() - currentTime) / 1_000_000_000.0;
+    if (frameTime &lt; targetDelta) {
+        /* wait targetDelta - frameTime seconds */
+    }</strong>
+}</code></pre>
+    <p>
+        As you can see, we measure the time it took to update the world and if necessary, make the loop wait a while before
+        starting the next iteration. The resulting loop is said to have a target frame rate of 60fps. Because every iteration
+        takes at least 16.6ms, the time steps will never be smaller than 16.6ms.
+    </p>
+    <h3>Variable time steps - variable frame rate with a target frame rate and a maximum time step</h3>
+    <p>
+        The technique we used to address small time steps unfortunately cannot be applied to large time steps as well:
+        while we can tell the loop to wait a while, we can't tell it to 'hurry up' because our frame rate is getting too low.
+        If the hardware can't keep up with our demand, the performance will degrade. There isn't much to be done about that.
+        But we do have a choice as to how the game degrades:
+    </p>
+    <ul>
+        <li>
+            We stick to the previous implementation and let the frame rate drop. As a result, the game time keeps progressing
+            at a constant speed but the time steps will grow larger, possibly making the game unplayable due to increased latency
+            and physics issues.
+        </li>
+        <li>
+            We impose an upper bound on the time steps. As a result, we are effectively slowing down time in the game because
+            the time steps used to update the game will be smaller than the actual time that has passed. Whether or not this
+            makes the game any more playable at low frame rates than with the previous approach is hard to say.
+        </li>
+    </ul>
+    <p>
+        If you prefer the second option, your implementation could look like:
+    </p>
+    <pre><code class="java">final double targetDelta = 0.0166;
+<strong>final double maxDelta = 0.05;</strong>
+long previousTime = System.nanoTime();
+
+while (!gameOver)
+{
+    long currentTime = System.nanoTime();
+    double deltaTime = (currentTime - previousTime) / 1_000_000_000.0; 
+    
+    <strong>if (deltaTime &gt; maxDelta) {
+        deltaTime = maxDelta;
+    }</strong>
+
+    processEvents();
+    updateWorld(deltaTime);
+    renderFrame();
+
+    previousTime = currentTime;
+
+    double frameTime = (System.nanoTime() - currentTime) / 1_000_000_000.0;
+    if (frameTime &lt; targetDelta) {
+        /* wait targetDelta - frameTime seconds */
+    }
+}</code></pre>
+    <h2 class="section-heading">Fixed time steps</h2>
+    <p>
+        It turns out our basic loop did have one advantage: fixed time steps. While the variable time step approach in
+        the previous section might work fine for you, there are a few reasons why you should consider opting for a truly fixed time step.
+    </p>
+    <p>
+        Fixed time steps are the only way to get truly deterministic (and thus reproducible) behavior.
+        As we discussed before, floating point calculations are not without errors.
+        The result of a 16.4ms time step followed by a 16.8ms time step might not be the same as the result of two 16.6ms time steps.
+        Fixed time steps and the resulting determinism makes it possible to:
+    </p>
+    <ul>
+        <li>track down bugs by reproducing the exact circumstances in which the bug occurred.</li>
+        <li>synchronise network play.</li>
+        <li>provide instant replays.</li>
+    </ul>
+    <h3>Fixed time steps using an accumulator</h3>
+    <p>
+        Let's take a stab at re-implementing our game loop using fixed time steps:
+    </p>
+    <pre><code class="java">final double timeStep = 0.0166;
+long previousTime = System.nanoTime();
+<strong>double accumulatedTime = 0;</strong>
+
+while (!gameOver)
+{
+    long currentTime = System.nanoTime();
+    double deltaTime = (currentTime - previousTime) / 1_000_000_000.0;
+    <strong>accumulatedTime += deltaTime;</strong>
+
+    processEvents();
+
+    <strong>while (accumulatedTime &gt;= timeStep) {
+        updateWorld(timeStep);
+        accumulatedTime -= timeStep;
+    }</strong>
+
+    renderFrame();
+
+    previousTime = currentTime;
+}</code></pre>
+    <p>
+        The technique here is to slice the amount of time passed into timeStep-sized pieces. If we measured a delta time of 34ms
+        and our time step is 16ms, we simply step the world twice. The remaining 2ms are saved in the accumulator and carried
+        over to the next iteration. By doing this, the game time will progress at a relatively constant speed, yet we have all
+        the benefits of a fixed time step.
+    </p>
+    <p>
+        There are two issues with this approach however. The first issue is that the number of steps taken in each iteration
+        of the loop can vary. Let's say our time step is set at 16ms, yet most frames take 17-18ms. This 1-2ms difference will
+        slowly build up in the accumulator until it reaches 16ms. At that point the game will move forward 32ms instead of the usual 16ms.
+        This leads to what is knows as temporal aliasing.
+    </p>
+    <p>
+        The second issue is the so called 'spiral of death' where if one interation takes up a lot of time, the next iteration
+        will have to take additional time steps, causing that iteration to take up even more time, etc. This issue didn't exist
+        with variable time steps because we were updating the world only once, albeit with a large time step.
+    </p>
+    <h3>Fixed time steps using an accumulator and a maximum delta time</h3>
+    <p>
+        Let's start by addressing the spiral of death:
+    </p>
+    <pre><code class="java">final double timeStep = 0.0166;
+<strong>final double maxDelta = 0.05;</strong>
+long previousTime = System.nanoTime();
+double accumulatedTime = 0;
+
+while (!gameOver)
+{
+    long currentTime = System.nanoTime();
+    double deltaTime = (currentTime - previousTime) / 1_000_000_000.0;
+
+    <strong>if (deltaTime &gt; maxDelta) {
+        deltaTime = maxDelta;
+    }</strong>
+
+    accumulatedTime += deltaTime;
+
+    processEvents();
+
+    while (accumulatedTime &gt;= timeStep) {
+        updateWorld(timeStep);
+        accumulatedTime -= timeStep;
+    }
+
+    renderFrame();
+
+    previousTime = currentTime;
+}</code></pre>
+    <p>
+        As you can see, this is exactly the same as what we did with the variable time steps. The result is the same as well:
+        by limiting delta time to maxDelta, the game time will effectively slow down once delta time gets larger than maxDelta.
+    </p>
+    <h3>Fixed time steps using an accumulator, a maximum delta time and interpolation</h3>
+    <p>
+        Now, how do we take care of temporal aliasing? Temporal anti-aliasing ofcourse,
+        which in this case boils down to a seemingly simple interpolation:
+    </p>
+    <pre><code class="java">final double timeStep = 0.0166;
+final double maxDelta = 0.05;
+long previousTime = System.nanoTime();
+double accumulatedTime = 0;
+
+while (!gameOver)
+{
+    long currentTime = System.nanoTime();
+    double deltaTime = (currentTime - previousTime) / 1_000_000_000.0;
+
+    if (deltaTime &gt; maxDelta) {
+        deltaTime = maxDelta;
+    }
+
+    accumulatedTime += deltaTime;
+
+    processEvents();
+
+    while (accumulatedTime &gt;= timeStep) {
+        updateWorld(timeStep);
+        accumulatedTime -= timeStep;
+    }
+
+    <strong>interpolateWithAlpha(accumulatedTime / timeStep);</strong>
+
+    renderFrame();
+
+    previousTime = currentTime;
+}</code></pre>
+    <p>
+        What the interpolation does is simply guess where all the game objects would have been,
+        had we taken the remaining accumulated time into account. This can be expressed as follows:
+    </p>
+    <pre><code class="java">interpolatedState = currentState + alpha * (nextState - currentState)</code></pre>
+    <p>
+        which is equal to:
+    </p>
+    <pre><code class="java">interpolatedState = (1 - alpha) * currentState + alpha * nextState</code></pre>
+    <p>
+        For example: if the remaining accumulated time is 25% of a complete time step, this interpolation guesses where the game objects
+        would have been, had we taken an additional 25% of a time step.
+    </p>
+    <p>
+        While this all looks simple in pseudo-code, implementing interpolation is not as easy as the pseudo-code makes it look.
+        In order to calculate the interpolated state, you need to maintain two separate copies of the game state:
+        the current state as well as the next state.
+    </p>
+    <p>
+        Also note that because the physics system always needs to calculate one step ahead (we need the next state to do the interpolation),
+        this technique adds additional input latency to your game.
+    </p>
+    <h2 class="section-heading">Results</h2>
+    <p>
+        So which implementation should you use? My short answer would be: if you're using a physics engine, you need fixed time steps, period.
+        If not, variable time steps might be easier to implement and work just fine.
+    </p>
+    <h2 class="section-heading">References</h2>
+    <p>
+        I learned the most from the following sources, so go and check them out:
+    </p>
+    <ul>
+        <li><a href="http://gafferongames.com/game-physics/fix-your-timestep/">Fix Your Timestep</a> by Glenn Fiedler.</li>
+        <li><a href="http://www.koonsolo.com/news/dewitters-gameloop/">deWiTTERS Game Loop</a> by Koen Witters.</li>
+        <li><a href="http://www.gameenginebook.com">Game Engine Architecture</a> by Jason Gregory.</li>
+        <li><a href="http://www.pearsonhighered.com/bookseller/product/Game-Programming-Algorithms-and-Techniques-A-PlatformAgnostic-Approach/9780321940155.page">Game Programming Algorithms and Techniques</a> by Sanjay Madhav.</li>
+    </ul>
+{% endblock %}

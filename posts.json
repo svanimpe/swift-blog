@@ -1,0 +1,120 @@
+[
+    {
+        "name": "html-decoding",
+        "title": "Decoding HTML character references in Swift",
+        "subtitle": "When all you need is plain text",
+        "background": "bg-swift",
+        "created": "January 22, 2016"
+    },
+    {
+        "name": "ios-closures",
+        "title": "Using closures as event handlers in iOS",
+        "subtitle": "Swiftify your APIs",
+        "background": "bg-swift",
+        "created": "October 31, 2015"
+    },
+    {
+        "name": "pong-ios",
+        "title": "Pong",
+        "subtitle": "Taking JavaFX to the iOS App Store",
+        "background": "pong-bg",
+        "created": "May 20, 2014",
+        "updated": "January 26, 2015"
+    },
+    {
+        "name": "pong",
+        "title": "Pong",
+        "subtitle": "Classic game programming",
+        "background": "pong-bg",
+        "created": "May 20, 2014",
+        "updated": "January 26, 2015"
+    },
+    {
+        "name": "game-loops-fx",
+        "title": "Game loops",
+        "subtitle": "Applying the theory to JavaFX",
+        "background": "bg-gradient",
+        "created": "May 2, 2014",
+        "updated": "January 24, 2015"
+    },
+    {
+        "name": "game-loops",
+        "title": "Game loops",
+        "subtitle": "Basic theory",
+        "background": "bg-gradient",
+        "created": "January 12, 2014",
+        "updated": "January 22, 2015"
+    },
+    {
+        "name": "buglist",
+        "title": "BugList",
+        "subtitle": "Getting to know JavaFX (3/3)",
+        "background": "buglist-bg",
+        "created": "December 16, 2013",
+        "updated": "January 13, 2015"
+    },
+    {
+        "name": "glassfish-openshift",
+        "title": "GlassFish 4 on OpenShift",
+        "subtitle": "Hosting your Java&nbsp;EE apps",
+        "background": "bg-gradient",
+        "created": "September 14, 2013",
+        "updated": "January 19, 2015"
+    },
+    {
+        "name": "properties-jpa",
+        "title": "JavaFX properties in JPA",
+        "subtitle": "Turn JavaFX domain objects into persistent entities",
+        "background": "bg-gradient",
+        "created": "May 31, 2013",
+        "updated": "January 20, 2015"
+    },
+    {
+        "name": "jaxrs-images",
+        "title": "Images in JAX-RS",
+        "subtitle": "Sending and receiving images in a webservice",
+        "background": "bg-gradient",
+        "created": "April 30, 2013",
+        "updated": "January 20, 2015"
+    },
+    {
+        "name": "reminders-web",
+        "title": "Reminders",
+        "subtitle": "Taking it to the web",
+        "background": "reminders-bg",
+        "created": "April 12, 2013",
+        "updated": "January 17, 2015"
+    },
+    {
+        "name": "reminders",
+        "title": "Reminders",
+        "subtitle": "Taking JavaFX seriously<br>May include traces of Java&nbsp;EE",
+        "background": "reminders-bg",
+        "created": "January 26, 2013",
+        "updated": "January 13, 2015"
+    },
+    {
+        "name": "ogly",
+        "title": "Ogly",
+        "subtitle": "Getting to know JavaFX (2/3)",
+        "background": "ogly-bg",
+        "created": "December 5, 2012",
+        "updated": "January 12, 2015"
+    },
+    {
+        "name": "guybrush",
+        "title": "Guybrush",
+        "subtitle": "Getting to know JavaFX (1/3)",
+        "background": "guybrush-bg",
+        "created": "December 3, 2012",
+        "updated": "January 12, 2015"
+    },
+    {
+        "name": "jumpman",
+        "title": "Jumpman",
+        "subtitle": "Fun with fireballs<br>Includes free State pattern!",
+        "background": "jumpman-bg",
+        "created": "November 27, 2012",
+        "updated": "January 11, 2015"
+    }
+]

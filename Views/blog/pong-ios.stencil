@@ -1,0 +1,301 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Pong, a classic game programming example in JavaFX, ported to iOS">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        Right after finishing <a href="pong">Pong</a>, I started the experiment of porting it to iOS,
+        mainly to learn more about <a href="http://www.robovm.com/">RoboVM</a>. After a bit of research and asking questions on the
+        <a href="https://groups.google.com/forum/#!forum/robovm">RoboVM Google group</a>, I got the game running on my iPhone 5 and wondered
+        if Apple would accept it into the App Store. After a bit more research and asking questions on said Google group,
+        I finally had a valid and signed IPA, sent it to Apple and crossed my fingers.
+        Much to my surprise, on May 16th the light turned green and Pong (rebranded as Retro Game I to avoid angry letters from Atari)
+        was available on the App Store. For a while I thought this was the first JavaFX app on the App Store.
+        That turned out not to be the case (it was the second one), but as far as I know it still is the first open source one ;)
+    </p>
+    <p>
+        Even though the iOS port has some issues (and I've removed the game from the App Store because of them),
+        this has been a fun, exciting and successful experiment.
+        For those of you wanting to try out JavaFX on iOS for yourself, I'll spend the remainder of this post recapping the steps
+        I took to port the game to iOS and publish it to the App Store. Note that I used an early version of RoboVM and haven't updated
+        this post in almost a year. I'll revisit it when RoboVM 1.0 is released.
+    </p>
+    <h2 class="section-heading">Download</h2>
+    <p>
+        The source code is available on <a href="https://github.com/svanimpe/fx-pong/tree/ios">GitHub</a>. You will need the <code>ios</code> branch.
+        You will also need JDK 7 installed.
+    </p>
+    <h2 class="section-heading">Prerequisites</h2>
+    <p>
+        You will need a Mac with Xcode installed and a JavaFX project to start from. I'll be using the RoboVM Maven plugin,
+        so you'll need to use Maven for your project. My initial POM contained the following:
+    </p>
+    <pre><code class="xml">&lt;groupId&gt;svanimpe&lt;/groupId&gt;
+&lt;artifactId&gt;pong&lt;/artifactId&gt;
+&lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+&lt;packaging&gt;jar&lt;/packaging&gt;
+
+&lt;name&gt;Pong&lt;/name&gt;
+&lt;url&gt;https://github.com/svanimpe/fx-pong&lt;/url&gt;
+
+&lt;properties&gt;
+    &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;
+    &lt;maven.compiler.source&gt;1.7&lt;/maven.compiler.source&gt;
+    &lt;maven.compiler.target&gt;1.7&lt;/maven.compiler.target&gt;
+    &lt;mainClass&gt;svanimpe.pong.ui.Pong&lt;/mainClass&gt;
+&lt;/properties&gt;
+
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.oracle&lt;/groupId&gt;
+        &lt;artifactId&gt;javafx&lt;/artifactId&gt;
+        &lt;version&gt;2.2&lt;/version&gt;
+        &lt;scope&gt;system&lt;/scope&gt;
+        &lt;systemPath&gt;${java.home}/lib/jfxrt.jar&lt;/systemPath&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+    <p>
+        I also added <code>-Xbootclasspath/a:"${env.JAVA_HOME}/jre/lib/jfxrt.jar"</code> to all my NetBeans actions in <code>nbactions.xml</code>,
+        to add <code>jfxrt.jar</code> to the boot classpath. You can do the same in your POM if you don't use NetBeans, but since I will use
+        <code>nbactions.xml</code> again later on, I did it this way. Just make sure <code>java.home</code> refers to JRE 7, not 8.
+        With this you should be able to run your JavaFX Maven project. Try it out and fix any issues before you continue.
+    </p>
+    <h2 class="section-heading">Prepare for RoboVM</h2>
+    <p>
+        RoboVM does not support Java 8 so make sure you're not using any Java 8 language features or API. RoboVM uses a backport of OpenJFX 8
+        so don't use anything from JavaFX 2 that has been removed in JavaFX 8. Also, audio is not yet supported on iOS. There probably are other
+        unsupported features as well, but audio is the only one I needed to remove from Pong to get it running on iOS.
+    </p>
+    <h2 class="section-heading">Configure RoboVM</h2>
+    <p>
+        RoboVM uses <code>robovm.properties</code> and <code>robovm.xml</code> as configuration files, as well as <code>Info.plist.xml</code>
+        which contains information about your application bundle. My files contain the following:
+    </p>
+    <p>
+        <code>robovm.properties</code>
+    </p>
+    <pre>app.version=1.0
+app.id=svanimpe.pong
+app.mainclass=svanimpe.pong.ui.iOSLauncher
+app.executable=Pong
+app.build=1
+app.name=Retro Game I</pre>
+    <p>
+        <code>robovm.xml</code>
+    </p>
+    <pre><code class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;config&gt;
+    &lt;executableName&gt;${app.executable}&lt;/executableName&gt;
+    &lt;mainClass&gt;${app.mainclass}&lt;/mainClass&gt;
+    &lt;os&gt;ios&lt;/os&gt;
+    &lt;arch&gt;thumbv7&lt;/arch&gt;
+    &lt;resources&gt;
+        &lt;resource&gt;
+            &lt;directory&gt;resources&lt;/directory&gt;
+        &lt;/resource&gt;
+    &lt;/resources&gt;
+    &lt;target&gt;ios&lt;/target&gt;
+    &lt;iosInfoPList&gt;Info.plist.xml&lt;/iosInfoPList&gt;
+&lt;/config&gt;</code></pre>
+    <p>
+        Of note here is the <code>resources</code> folder which contains the required icons, launch images, etc.
+        See Apple's information on <a href="https://developer.apple.com/library/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/ExpectedAppBehaviors/ExpectedAppBehaviors.html#//apple_ref/doc/uid/TP40007072-CH3-SW9">Required Resources</a> to figure out what files you need.
+    </p>
+    <p>
+        <code>Info.plist.xml</code>
+    </p>
+    <pre><code class="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"&gt;
+&lt;plist version="1.0"&gt;
+    &lt;dict&gt;
+        &lt;key&gt;CFBundleDevelopmentRegion&lt;/key&gt;
+        &lt;string&gt;en&lt;/string&gt;
+        &lt;key&gt;CFBundleDisplayName&lt;/key&gt;
+        &lt;string&gt;${app.name}&lt;/string&gt;
+        &lt;key&gt;CFBundleExecutable&lt;/key&gt;
+        &lt;string&gt;${app.executable}&lt;/string&gt;
+        &lt;key&gt;CFBundleIdentifier&lt;/key&gt;
+        &lt;string&gt;${app.id}&lt;/string&gt;
+        &lt;key&gt;CFBundleInfoDictionaryVersion&lt;/key&gt;
+        &lt;string&gt;6.0&lt;/string&gt;
+        &lt;key&gt;CFBundleName&lt;/key&gt;
+        &lt;string&gt;${app.name}&lt;/string&gt;
+        &lt;key&gt;CFBundlePackageType&lt;/key&gt;
+        &lt;string&gt;APPL&lt;/string&gt;
+        &lt;key&gt;CFBundleShortVersionString&lt;/key&gt;
+        &lt;string&gt;${app.version}&lt;/string&gt;
+        &lt;key&gt;CFBundleSignature&lt;/key&gt;
+        &lt;string&gt;????&lt;/string&gt;
+        &lt;key&gt;CFBundleVersion&lt;/key&gt;
+        &lt;string&gt;${app.build}&lt;/string&gt;
+        &lt;key&gt;NSHumanReadableCopyright&lt;/key&gt;
+        &lt;string&gt;Copyright © 2014 Steven Van Impe. All rights reserved.&lt;/string&gt;
+        &lt;key&gt;LSRequiresIPhoneOS&lt;/key&gt;
+        &lt;true/&gt;
+        &lt;key&gt;UIDeviceFamily&lt;/key&gt;
+        &lt;array&gt;
+            &lt;integer&gt;1&lt;/integer&gt;
+        &lt;/array&gt;
+        &lt;key&gt;UIRequiredDeviceCapabilities&lt;/key&gt;
+        &lt;array&gt;
+            &lt;string&gt;armv7&lt;/string&gt;
+            &lt;string&gt;opengles-2&lt;/string&gt;
+        &lt;/array&gt;
+        &lt;key&gt;UISupportedInterfaceOrientations&lt;/key&gt;
+        &lt;array&gt;
+            &lt;string&gt;UIInterfaceOrientationLandscapeRight&lt;/string&gt;
+        &lt;/array&gt;
+    &lt;/dict&gt;
+&lt;/plist&gt;</code></pre>
+    <p>
+        See Apple's <a href="https://developer.apple.com/library/mac/documentation/General/Reference/InfoPlistKeyReference/Introduction/Introduction.html">Information Property List Key Reference</a> for more information on what the different keys mean.
+    </p>
+    <p>
+        The last part of the configuration is to add RoboVM to your dependencies:
+    </p>
+    <pre><code class="xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.robovm&lt;/groupId&gt;
+    &lt;artifactId&gt;robovm-rt&lt;/artifactId&gt;
+    &lt;version&gt;0.0.12&lt;/version&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.robovm&lt;/groupId&gt;
+    &lt;artifactId&gt;robovm-cocoatouch&lt;/artifactId&gt;
+    &lt;version&gt;0.0.12&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+    <p>
+        and configure the plugin:
+    </p>
+    <pre><code class="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.robovm&lt;/groupId&gt;
+    &lt;artifactId&gt;robovm-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;0.0.12.1&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;propertiesFile&gt;robovm.properties&lt;/propertiesFile&gt;
+        &lt;configFile&gt;robovm.xml&lt;/configFile&gt;
+        &lt;includeJFX&gt;true&lt;/includeJFX&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>     
+    <h2 class="section-heading">Launcher class</h2>
+    <p>
+        The final piece of the puzzle is the launcher class. This is an implementation of a UIApplicationDelegate required by iOS:
+    </p>
+    <pre><code class="java">public class iOSLauncher extends UIApplicationDelegateAdapter
+{
+    @Override
+    public boolean didFinishLaunching(UIApplication application,
+                                      NSDictionary launchOptions)
+    {
+        Thread fxThread = new Thread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Application.launch(Pong.class);
+            }
+        });
+        fxThread.setDaemon(true);
+        fxThread.start();
+        return true;
+    }
+    
+    public static void main(String... args)
+    {
+        System.setProperty("glass.platform", "ios");
+        System.setProperty("prism.text", "native");
+        
+        NSAutoreleasePool pool = new NSAutoreleasePool();
+        UIApplication.main(args, null, iOSLauncher.class);
+        pool.drain();
+    }
+}
+</code></pre>
+    <p>
+        This class is completely reusable. Simply replace <code>Pong.class</code> with your JavaFX Application subclass.
+    </p>
+    <h2 class="section-heading">Running on a simulator</h2>
+    <p>
+        After all this you should be able to run your app on the simulator with the Maven goals <code>robovm:iphone-sim</code>
+        and <code>robovm:ipad-sim</code>. If you prefer the convenience of NetBeans, add the following actions to your <code>nbactions.xml</code>:
+    </p>
+    <pre><code class="xml">&lt;action&gt;
+    &lt;actionName&gt;CUSTOM-device&lt;/actionName&gt;
+    &lt;displayName&gt;Run on device&lt;/displayName&gt;
+    &lt;goals&gt;
+        &lt;goal&gt;robovm:ios-device&lt;/goal&gt;
+    &lt;/goals&gt;
+&lt;/action&gt;
+&lt;action&gt;
+    &lt;actionName&gt;CUSTOM-iphone&lt;/actionName&gt;
+    &lt;displayName&gt;Run on iPhone simulator&lt;/displayName&gt;
+    &lt;goals&gt;
+        &lt;goal&gt;robovm:iphone-sim&lt;/goal&gt;
+    &lt;/goals&gt;
+&lt;/action&gt;
+&lt;action&gt;
+    &lt;actionName&gt;CUSTOM-ipad&lt;/actionName&gt;
+    &lt;displayName&gt;Run on iPad simulator&lt;/displayName&gt;
+    &lt;goals&gt;
+        &lt;goal&gt;robovm:ipad-sim&lt;/goal&gt;
+    &lt;/goals&gt;
+&lt;/action&gt;
+&lt;action&gt;
+    &lt;actionName&gt;CUSTOM-ipa&lt;/actionName&gt;
+    &lt;displayName&gt;Build IPA&lt;/displayName&gt;
+    &lt;goals&gt;
+        &lt;goal&gt;robovm:create-ipa&lt;/goal&gt;
+    &lt;/goals&gt;
+&lt;/action&gt;</code></pre>
+    <p>
+        These include the actions to run your app on a device and to build an IPA, which we'll need in the following sections.
+    </p>
+    <h2 class="section-heading">Running on a device</h2>
+    <p>
+        If you want to run your app on a device, you'll need:
+    </p>
+    <ul>
+        <li>an iOS developer account.</lI>
+        <li>to provision your device for development.</li>
+    </ul>
+    <p>
+        Follow Apple's steps on how to <a href="https://developer.apple.com/library/ios/documentation/ToolsLanguages/Conceptual/Xcode_Overview/RunYourApp.html">run your app on a connected device</a>
+        then connect the device and run the Maven goal <code>robovm:ios-device</code> or use the custom NetBeans action from the previous section.
+    </p>
+    <h2 class="section-heading">Submit to the App Store</h2>
+    <p>
+        First go to <a href="https://itunesconnect.apple.com/">iTunes Connect</a> and create a new <a href="https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/UsingiTunesConnect/UsingiTunesConnect.html">App Record</a>.
+        It should be in the status 'Waiting For Upload'. Then, similar to what you did in the previous section,
+        create a signing identity and provisioning profile for distribution. It's easy enough through Xcode.
+        Apple has more on this in the <a href="https://developer.apple.com/library/ios/documentation/IDEs/Conceptual/AppDistributionGuide/SubmittingYourApp/SubmittingYourApp.html">App Distribution Guide</a>.
+    </p>
+    <p>
+        Next, configure the RoboVM Maven plugin to use your distribution (not development) signing identity and provisioning profile.
+        My configuration is as follows:
+    </p>
+    <pre><code class="xml">&lt;plugin&gt;
+    &lt;groupId&gt;org.robovm&lt;/groupId&gt;
+    &lt;artifactId&gt;robovm-maven-plugin&lt;/artifactId&gt;
+    &lt;version&gt;0.0.12.1&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;propertiesFile&gt;robovm.properties&lt;/propertiesFile&gt;
+        &lt;configFile&gt;robovm.xml&lt;/configFile&gt;
+        &lt;includeJFX&gt;true&lt;/includeJFX&gt;
+        &lt;iosSignIdentity&gt;iPhone Distribution&lt;/iosSignIdentity&gt;
+        &lt;iosProvisioningProfile&gt;F40BF4FD-D09A-4548-8667-EE6E819D3755&lt;/iosProvisioningProfile&gt;
+    &lt;/configuration&gt;
+&lt;/plugin&gt;</code></pre>
+    <p>
+        The <code>iosProvisioningProfile</code> key refers to the UUID of your provisioning profile.
+        To find this value, go to the <a href="https://developer.apple.com/membercenter/">Apple Developer Member Center</a>,
+        download your distribution provisioning profile and open the downloaded file in TextEdit (or <code>cat</code> it on the command line).
+    </p>
+    <p>
+        With your signing identity and profile set up, you should be able to generate an IPA with the Maven goal <code>robovm:create-ipa</code>
+        or using the custom NetBeans action. Finally, use Application Loader (it comes with Xcode) to submit your IPA.
+        If your IPA contains all the required assets, and it's signed correctly, you should be fine.
+        All that's left now is to sit back and wait a few days for your app to be reviewed.
+    </p>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "template-base.stencil" %}
+
+{% block title %}{{ block.super }} - {{ post.title }}{% endblock %}
+
+{% block additional-head %}
+    <link href="/public/css/xcode.css" rel="stylesheet">
+    <style>
+        pre {
+            font-size: 80%;
+        }
+        pre code {
+            font-size: 90%;
+        }
+    </style>
+    {% block even-more-head %}{% endblock %}
+{% endblock %}
+
+{% block header %}
+    <header class="masthead" style="background-image: url('/public/img/blog/{{ post.background }}.jpg')">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-md-10 mx-auto">
+                    <div class="post-heading">
+                        <h1>{{ post.title }}</h1>
+                        <h2 class="subheading">{{ post.subtitle }}</h2>
+                        <span class="meta">
+                            {% if post.updated %}
+                                Originally posted on {{ post.created }}<br>Updated on {{ post.updated }}
+                            {% else %}
+                                Posted on {{ post.created }}
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endblock %}
+
+
+{% block content %}
+    {% block post-content %}{% endblock %}
+    <p>
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="svanimpe" data-size="large">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </p>
+    <p>
+        If you've enjoyed this post or found it helpful, please consider <a href="https://www.patreon.com/svanimpe">becoming a patron</a>.
+        Your patronage helps me free up time to work on my books and projects.
+    </p>
+{% endblock %}
+
+{% block additional-body %}
+    <script src="/public/js/highlight.pack.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    {% block even-more-body %}{% endblock %}
+{% endblock %}

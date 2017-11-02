@@ -1,0 +1,26 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Guybrush, a basic JavaFX example covering nodes, events and animations.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        This was the first of <a href="ogly">two</a> examples I used to teach my first JavaFX workshop.
+        This example covers:
+    </p>
+    <ul>
+        <li>adding nodes to the scene graph.</li>
+        <li>event handling.</li>
+        <li>animation.</li>
+    </ul>
+    <p>
+        In case you're wondering: the example is named after Guybrush Threepwood, the main character in the classic
+        Monkey Island series of adventure games. These games are still for sale on the App Store, GOG and Steam and I suggest you go buy them!
+    </p>
+    <h2 class="section-heading">Download</h2>
+    <p>
+        The source code is available on <a href="https://github.com/svanimpe/fx-guybrush">GitHub</a>.
+    </p>
+{% endblock %}

@@ -1,0 +1,352 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Game loops in theory and practice and how to program them in JavaFX.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        In this post I will try to apply the game loop theory from the <a href="game-loops">previous post</a> to JavaFX.
+        The application I built to test all of this out is available on <a href="https://github.com/svanimpe/fx-game-loops">GitHub</a>.
+    </p>
+    <img class="img-fluid img-thumbnail" alt="Screenshot" src="/public/img/blog/game-loops-fx.png">
+    <p>
+        You can use this application to visually compare the different loops. This application uses Box2D (JBox2D) as a physics engine.
+        Reading the "Hello Box2D" section in the <a href="http://box2d.org/manual.pdf">Box2D manual</a> should be sufficient to understand the code.
+        The application is extensible so you can easily add new games, animations or game loop implementations and try them out.
+    </p>
+    <h2 class="section-heading">Understanding JavaFX</h2>
+    <p>
+        Before we can talk about game loops, we need to discuss pulses. A pulse is a special event scheduled by JavaFX whenever
+        animations are running or the scene otherwise needs updating. During a pulse:
+    </p>
+    <ul>
+        <li>animations are advanced.</li>
+        <li>CSS is applied.</li>
+        <li>layout is done.</li>
+        <li>the scene is synchronized with the render thread.</li>
+    </ul>
+    <p>
+        Pulses run at most 60 times per second, less if they take longer than 1/60th of a second.
+        This means JavaFX already has target frame rate of 60FPS built-in. Less work for our game loop!
+    </p>
+    <p>
+        The easiest way to hook into the pulse system is to start an AnimationTimer. Objects of this class have a <code>handle</code> method.
+        This method is called during every pulse and is passed the current time in nanoseconds.
+        We'll use this <code>handle</code> method to implement our game loop.
+    </p>
+    <p>
+        To learn more about pulses, go watch the following talks on Parleys:
+    </p>
+    <ul>
+        <li><a href="http://parleys.com/play/514892290364bc17fc56c351">JavaFX Architecture and Programming Model</a> (Richard Bair, JavaOne 2011)</li>
+        <li><a href="http://parleys.com/play/52545133e4b0c4f11ec576ee">Optimizing JavaFX Applications</a> (Oleg Mazurov, JavaOne 2013)</li>
+    </ul>
+    <h2 class="section-heading">Variable time steps</h2>
+    <p>
+        The first implementation I'll discuss is that of a game loop using variable time steps.
+        This is an implementation of "Variable time steps - variable frame rate with a target frame rate and a maximum time step" from the previous post.
+    </p>
+    <p>
+        First note that I moved the implementation into a separate class VariableSteps and used callbacks to tell the loop what to do at certain points:
+    </p>
+    <pre><code class="java">private final Consumer&lt;Float&gt; updater;
+private final Runnable renderer;
+private final Consumer&lt;Integer&gt; fpsReporter;
+
+public VariableSteps(Consumer&lt;Float&gt; updater,
+                     Runnable renderer,
+                     Consumer&lt;Integer&gt; fpsReporter)
+{
+    this.updater = updater;
+    this.renderer = renderer;
+    this.fpsReporter = fpsReporter;
+}</code></pre>
+    <p>
+        First the <code>updater</code> will be called to update the physics state based on the amount of time passed.
+        Next, the <code>renderer</code> will be called to update the properties of the nodes on screen based on their updated physics state.
+        Finally, the <code>fpsReporter</code> will be called twice per second to update the FPS status on screen.
+    </p>
+    <p>
+        Class VariableSteps inherits from class GameLoop, which holds a <code>maximumStep</code> property common to all game loops in the demo application.
+        Class GameLoop inherits from AnimationTimer so all our game loops are AnimationTimer subclasses and will override the <code>handle</code> method.
+        For the variable time steps implementation, this is done as follows:
+    </p>
+    <pre><code class="java">private long previousTime = 0;
+private float secondsElapsedSinceLastFpsUpdate = 0f;
+private int framesSinceLastFpsUpdate = 0;
+
+@Override
+public void handle(long currentTime)
+{
+    if (previousTime == 0) {
+        previousTime = currentTime;
+        return;
+    }
+
+    float secondsElapsed = (currentTime - previousTime) / 1e9f;
+    float secondsElapsedCapped = Math.min(secondsElapsed, getMaximumStep());
+    previousTime = currentTime;
+
+    updater.accept(secondsElapsedCapped);
+    renderer.run();
+
+    secondsElapsedSinceLastFpsUpdate += secondsElapsed;
+    framesSinceLastFpsUpdate++;
+    if (secondsElapsedSinceLastFpsUpdate &gt;= 0.5f) {
+        int fps = Math.round(framesSinceLastFpsUpdate / secondsElapsedSinceLastFpsUpdate);
+        fpsReporter.accept(fps);
+        secondsElapsedSinceLastFpsUpdate = 0;
+        framesSinceLastFpsUpdate = 0;
+    }
+}</code></pre>
+    <p>
+        This implementation can be split up into four parts:
+    </p>
+    <ol>
+        <li>If this is the first frame, simply record the current time.</li>
+        <li>Calculate the amount of time passed since the previous frame (also converting nanoseconds to seconds) and adjust this to the maximum time step.</li>
+        <li>Call the <code>updater</code> and <code>renderer</code> callbacks.</li>
+        <li>Calculate FPS and report it to the <code>fpsReporter</code> callback.</li>
+    </ol>
+    <p>
+        I also override the <code>stop</code> method from AnimationTimer so the loops can be restarted:
+    </p>
+    <pre><code class="java">@Override
+public void stop()
+{
+    previousTime = 0;
+    secondsElapsedSinceLastFpsUpdate = 0f;
+    framesSinceLastFpsUpdate = 0;
+    super.stop();
+}</code></pre>
+    <p>
+        Note that some of the choices I made here were intended to keep the code clean and readable, and to suit the demo application. For example:
+    </p>
+    <ul>
+        <li>If you don't implement your game loop as a separate class, or implement it as an inner class, you might not need callbacks.</li>
+        <li>If you don't need to be able to restart the game loop, you don't need to override the <code>stop</code> method.</li>
+        <li>If you don't need to track FPS, you can ofcourse delete that part of the code.</li>
+    </ul>
+    <h2 class="section-heading">Fixed time steps</h2>
+    <p>
+        Next up are fixed time steps. This is an implementation of "Fixed time steps using an accumulator and a maximum delta time"
+        from the previous post.
+    </p>
+    <p>
+        Class FixedSteps has two additional attributes compared to class VariableSteps:
+    </p>
+    <pre><code class="java">private static final float timeStep = 0.0166f;
+private float accumulatedTime = 0;</code></pre>
+    <p>
+        These attributes are used in both the <code>handle</code> and <code>stop</code> methods:
+    </p>
+    <pre><code class="java">@Override
+public void handle(long currentTime)
+{
+    if (previousTime == 0) {
+        previousTime = currentTime;
+        return;
+    }
+
+    float secondsElapsed = (currentTime - previousTime) / 1e9f;
+    float secondsElapsedCapped = Math.min(secondsElapsed, getMaximumStep());
+    <strong>accumulatedTime += secondsElapsedCapped;</strong>
+    previousTime = currentTime;
+
+    <strong>while (accumulatedTime &gt;= timeStep) {
+        updater.accept(timeStep);
+        accumulatedTime -= timeStep;
+    }</strong>
+    renderer.run();
+
+    secondsElapsedSinceLastFpsUpdate += secondsElapsed;
+    framesSinceLastFpsUpdate++;
+    if (secondsElapsedSinceLastFpsUpdate &gt;= 0.5f) {
+        int fps = Math.round(framesSinceLastFpsUpdate / secondsElapsedSinceLastFpsUpdate);
+        fpsReporter.accept(fps);
+        secondsElapsedSinceLastFpsUpdate = 0;
+        framesSinceLastFpsUpdate = 0;
+    }
+}
+
+@Override
+public void stop()
+{
+    previousTime = 0;
+    <strong>accumulatedTime = 0;</strong>
+    secondsElapsedSinceLastFpsUpdate = 0f;
+    framesSinceLastFpsUpdate = 0;
+    super.stop();
+}</code></pre>
+    <p>
+        As you can see, this is a pretty straightforward implementation of the pseudo-code in the previous post.
+        Things start to get interesting when we add interpolation, which is what I'll discuss next.
+    </p>
+    <h2 class="section-heading">Fixed time steps with interpolation</h2>
+    <p>
+        This is an implementation of "Fixed time steps using an accumulator, a maximum delta time and interpolation" from the previous post.
+    </p>
+    <p>
+        At first sight, implementing interpolation seemed like quite a challenge. In order to interpolate, we need to maintain two separate
+        states to interpolate between, namely the current state and the next state. This seemed like a lot of work, until I made the
+        following observation: combining JavaFX with a physics engine automatically results in two separate states.
+        On the one hand there is the state of the JavaFX nodes (<code>translateX</code>, <code>translateY</code>, ..) while on the other,
+        there's the state of the physics bodies. Having realized that, I tried to come up with a clever implementation of interpolation
+        that would not require any additional state on top of what we already have.
+    </p>
+    <p>
+        First we introduce an additional callback to handle interpolation:
+    </p>
+    <pre><code class="java">private final Consumer&lt;Float&gt; updater;
+private final Runnable renderer;
+<strong>private final Consumer&lt;Float&gt; interpolater;</strong>
+private final Consumer&lt;Integer&gt; fpsReporter;
+
+public FixedStepsWithInterpolation(Consumer&lt;Float&gt; updater,
+                                   Runnable renderer,
+                                   <strong>Consumer&lt;Float&gt; interpolater,</strong>
+                                   Consumer&lt;Integer&gt; fpsReporter)
+{
+    this.updater = updater;
+    this.renderer = renderer;
+    <strong>this.interpolater = interpolater;</strong>
+    this.fpsReporter = fpsReporter;
+}</code></pre>
+    <p>
+        This <code>interpolater</code> will be called with the current alpha value to interpolate between the current state
+        and the next state as discussed in the previous post. Next, the implementation I came up with goes as follows:
+    </p>
+    <pre><code class="java">@Override
+public void handle(long currentTime)
+{
+    if (previousTime == 0) {
+        previousTime = currentTime;
+        return;
+    }
+
+    float secondsElapsed = (currentTime - previousTime) / 1e9f;
+    float secondsElapsedCapped = Math.min(secondsElapsed, getMaximumStep());
+    accumulatedTime += secondsElapsedCapped;
+    previousTime = currentTime;
+
+    <strong>if (accumulatedTime &lt; timeStep) {
+        float remainderOfTimeStepSincePreviousInterpolation = 
+            timeStep - (accumulatedTime - secondsElapsed);
+        float alphaInRemainderOfTimeStep =
+            secondsElapsed / remainderOfTimeStepSincePreviousInterpolation;
+        interpolater.accept(alphaInRemainderOfTimeStep);
+        return;
+    }
+
+    while (accumulatedTime &gt;= 2 * timeStep) {
+        updater.accept(timeStep);
+        accumulatedTime -= timeStep;
+    }
+    renderer.run();
+    updater.accept(timeStep);
+    accumulatedTime -= timeStep;
+    float alpha = accumulatedTime / timeStep;
+    interpolater.accept(alpha);</strong>
+
+    secondsElapsedSinceLastFpsUpdate += secondsElapsed;
+    framesSinceLastFpsUpdate++;
+    if (secondsElapsedSinceLastFpsUpdate &gt;= 0.5f) {
+        int fps = Math.round(framesSinceLastFpsUpdate / secondsElapsedSinceLastFpsUpdate);
+        fpsReporter.accept(fps);
+        secondsElapsedSinceLastFpsUpdate = 0;
+        framesSinceLastFpsUpdate = 0;
+    }
+}</code></pre>
+    <p>
+        It's easier to understand this code if you skip the special case where the accumulator is less than the time step
+        and start reading at the while loop. The algorithm then goes as follows:
+    </p>
+    <ol>
+        <li>
+            Keep calling the <code>updater</code> as long as there are two or more time steps remaining in the accumulator.
+            After this is done, there is one complete time step left in the accumulator, and possibly a remainder as well.
+        </li>
+        <li>
+            Call the <code>renderer</code>. This updates the state of the nodes based on the current physics state,
+            which will soon be the previous physics state, because there is still one time step left in the accumulator.
+            For an example of 'rendering', see the method <code>updatePosition</code> below.
+        </li>
+        <li>
+            Do the final time step. At this point, the physics state is one step ahead of the state on screen.
+            Calculate the alpha value based on the time remaining in the accumulator.
+        </li>
+        <li>
+            Call the <code>interpolater</code> with this alpha value. This will interpolate all game objects between their current state
+            (the state of the node, based on the previous physics state) and their next state
+            (the current physics state, as a result of the final time step). For an example of interpolation,
+            see the method <code>interpolatePosition</code> below.
+        </li>
+    </ol>
+    <p>
+        Rendering and interpolation examples taken from the class Ball:
+    </p>
+    <pre><code class="java">public void updatePosition()
+{
+    if (!body.isAwake()) {
+        return;
+    }
+    setTranslateX(body.getPosition().x * SCALE);
+    setTranslateY((HEIGHT - body.getPosition().y) * SCALE);
+}
+
+public void interpolatePosition(float alpha)
+{
+    if (!body.isAwake()) {
+        return;
+    }
+    setTranslateX(alpha * body.getPosition().x * SCALE +
+                  (1 - alpha) * getTranslateX());
+    setTranslateY(alpha * (HEIGHT - body.getPosition().y) * SCALE +
+                  (1- alpha) * getTranslateY());
+}</code></pre>
+    <p>
+        These methods transform the world coordinates (the <code>x</code> and <code>y</code> positions of the physics body) into screen coordinates
+        (based on the <code>SCALE</code> and <code>HEIGHT</code> settings of the game) and update the <code>translateX</code> and
+        <code>translateY</code> properties of the node used to represent a Ball on screen.
+    </p>
+    <p>
+        Finally, there's a special case where the accumulator is less than the time step. In this case we need to re-interpolate between
+        the same two states we used for the previous interpolation. But this is impossible, as one of those states (the state of the node,
+        based on the previous physics state) got overwritten during the previous interpolation. By summoning the vast power of mathematics 
+        however, we can adjust the alpha value to interpolate not between the previous physics state (which we don't have anymore)
+        and the current physics state, but between the previous interpolation (which is now the state of the node) and the current physics state.
+        Doing it this way avoids having to store multiple physics states.
+    </p>
+    <h2 class="section-heading">Results</h2>
+    <p>
+        I was very happy to see the expected behaviour reproduced in the demo application:
+    </p>
+    <ul>
+        <li>
+            Physics issues quickly appear when using variable time steps.
+        </li>
+        <li>
+            A lot less physics issues appear when using fixed time steps.
+            The issues that remain seem to be normal and a matter of accuracy vs. speed when configuring the physics engine.
+        </li>
+        <li>
+            The spiral of death is easily reproduced by simulating a large number of objects without using a maximum step.
+        </li>
+        <li>
+            Using a maximum time step causes the game to slow down instead of spiraling to death whenever the machine can't keep up.
+        </li>
+        <li>
+            Interpolation does seem to smoothen out the animation. Try setting the demo application to fixed steps without interpolation,
+            choose a low number of objects so the animation can run at full speed and turn off the maximum step.
+            Look for glitches when a ball is stepped twice in one frame, instead of the usual one step per frame.
+            Then turn on interpolation and see if these glitches disappear.
+        </li>
+    </ul>
+    <p>
+        As a final note, I would like to point out that JavaFX is not at all aimed at game development.
+        I would not recommend it for any serious game development. The reason I chose to implement this example using JavaFX
+        is because it's a framework I enjoy using and use a lot in education.
+    </p>
+{% endblock %}

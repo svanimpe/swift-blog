@@ -1,0 +1,73 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="An example application that shows how to upload and download images via a JAX-RS RESTful webservice.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        One of the first problems I ran into when I started building RESTful webservices was figuring out how to handle
+        image uploads and downloads. It turned out it was harder to find good information than to actually do it, 
+        so I decided to build an example application and share it with others.
+    </p>
+    <p>
+        Update: the more recent <a href="reminders-web">Reminders</a> example includes this functionality in a full application.
+    </p>
+    <h2 class="section-heading">Download</h2>
+    <p>
+        The source code is available on <a href="https://github.com/svanimpe/jaxrs-images">GitHub</a>.
+    </p>
+    <h2 class="section-heading">Setup</h2>
+    <p></p>
+    <ul>
+        <li>
+            Edit the class <code>ImageService</code> as follows:
+            <ul>
+                <li>Change the constant <code>BASE_DIR</code> to point to an existing directory on your server (or localhost)
+                    where you want to store the images.</li>
+                <li>Change the constant <code>MAX_SIZE_IN_MB</code> to the maximum allowed size you want to use.
+                    You will not be able to upload or download images larger than this size.</li>
+            </ul>
+        </li>
+        <li>Deploy the application.</li>
+        <li>Drop some images (with extension <code>.jpg</code> or <code>.png</code> and not larger than the maximum allowed size)
+            into the <code>BASE_DIR</code> folder you configured or use <code>upload.html</code> to upload some images (see below).</li>
+    </ul>
+    <h2 class="section-heading">Using the webservice</h2>
+    <p>
+        The webservice uses the following URLs:
+    </p>
+    <code>
+        http://localhost:8080/jaxrs-images/api/images
+    </code>
+    <p>
+        GET this URL to get a list of available images (filenames wrapped in a JSON array).
+        POST to this URL to upload an image. The server will store this image and pick a random filename for it.
+    </p>
+    <code>
+        http://localhost:8080/jaxrs-images/api/images/{filename}
+    </code>
+    <p>
+        GET this URL to download the image with the given filename.
+    </p>
+    <p>
+        If you change any of these URLs, make sure you update the <code>BASE_URL</code> variables in <code>upload.js</code> and <code>download.js</code> as well.
+    </p>
+    <h2 class="section-heading">Using the front-end</h2>
+    <p>
+        The front-end consists of the following pages:
+    </p>
+    <code>
+        http://localhost:8080/jaxrs-images/upload.html
+    </code>
+    <p>
+        Use this page to upload an image via an HTML form.
+    </p>
+    <code>
+        http://localhost:8080/jaxrs-images/download.html
+    </code>
+    <p>
+        Use this page to get a list of available images and to download them.
+    </p>
+{% endblock %}
