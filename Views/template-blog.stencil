@@ -44,8 +44,8 @@
         <a href="https://twitter.com/share" class="twitter-share-button" data-via="svanimpe" data-size="large">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
     </p>
     <p>
-        If you've enjoyed this post or found it helpful, please consider <a href="https://www.patreon.com/svanimpe">becoming a patron</a>.
-        Your patronage helps me free up time to work on my books and projects.
+        If you've enjoyed my work or found it helpful, please consider <a href="https://www.patreon.com/svanimpe">becoming a patron</a>.
+        Your support helps me free up time to work on my books and projects.
     </p>
 {% endblock %}
 
