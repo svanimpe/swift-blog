@@ -116,16 +116,16 @@ Next, add the domain to your IBM Cloud account. On the [web console](https://con
 
 Finally, configure the routes for your app. On the dashboard for your app, go to **Routes** > **Edit routes** and add the routes you'd like to use.
 
-For example, my domain `svanimpe.be` is configured using the following A-records:
+For example, my domain [svanimpe.be](http://svanimpe.be) is configured using the following A-records:
 
-- svanimpe.be -> 5.10.124.142
-- www.svanimpe.be -> 5.10.124.142
+- [svanimpe.be](http://svanimpe.be) -> 5.10.124.142
+- [www.svanimpe.be](http://svanimpe.be) -> 5.10.124.142
 
 After adding this domain to my account, I set up the following routes for my app:
 
-- svanimpe.eu-gb.mybluemix.net
-- svanimpe.be
-- www.svanimpe.be
+- [svanimpe.eu-gb.mybluemix.net](http://svanimpe.be)
+- [svanimpe.be](http://svanimpe.be)
+- [www.svanimpe.be](http://svanimpe.be)
 
 Note that changes to DNS records require some time to take effect, so wait at least a day before assuming you've made a mistake.
 
