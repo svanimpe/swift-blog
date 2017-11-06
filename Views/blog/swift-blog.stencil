@@ -1,0 +1,28 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="Swift Blog, an introductory server-side Swift example using Kitura and Stencil.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        This past year, I have spent quite some time experimenting with server-side Swift,
+        trying to find out how far I could take it, how easy it is to use and how well it performs.
+        These experiments turned into a larger project, one that I hope to release by the end of the year.
+        While that project will become my main example of server-side Swift,
+        I want to start with something smaller and more approachable.
+        To that end, I have rewritten this website in Swift.
+    </p>
+    <p>
+        The result is a simple template rendering app that can be used to create a personal website and blog.
+        It shows how to do basic routing and serve static files using <a href="http://www.kitura.io">Kitura</a>
+        and how to use <a href="https://stencil.fuller.li/">Stencil</a> as a template language for web pages.
+        Instructions are included to set up the app on your macOS or Linux machine,
+        as well as deploy to <a href="https://console.bluemix.net/">IBM Cloud</a> using a free account.
+    </p>
+    <h2 class="section-heading">Source code</h2>
+    <p>
+        For more information, see the repository on <a href="https://github.com/svanimpe/swift-blog">GitHub</a>.
+    </p>
+{% endblock %}

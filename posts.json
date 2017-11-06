@@ -1,5 +1,12 @@
 [
     {
+        "name": "swift-blog",
+        "title": "Swift Blog",
+        "subtitle": "Getting started with Swift on the server",
+        "background": "bg-swift",
+        "created": "November 6, 2017"
+    },
+    {
         "name": "html-decoding",
         "title": "Decoding HTML character references in Swift",
         "subtitle": "When all you need is plain text",
