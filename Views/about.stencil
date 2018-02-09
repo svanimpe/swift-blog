@@ -16,12 +16,6 @@
 
 {% block content %}
     <p>
-        Although I have a broad interest in computer science, my main focus is on education. I love taking things apart, studying
-        how they work and creating new things. But even more than that, I love passing on knowledge. That is why I chose a career
-        in education. Luckily there are plenty of school holidays I can spend on pursuing my interests, learning new skills and
-        creating new teaching materials.
-    </p>
-    <p>
         Below you'll find a summary of my work, education and other computer science related activities. If you have any questions,
         feel free to contact me on <a href="https://twitter.com/svanimpe">Twitter</a>.
     </p>
@@ -46,9 +40,9 @@
             </div>
             <div class="timeline-panel">
                 <p>
-                    <strong>February, 2016 (ongoing)</strong><br>
-                    Started teaching evening classes at <a href="http://www.hetperspectief.net">CVO Het Perspectief</a>,
-                    teaching programming with Swift to complete beginners.
+                    <strong>February, 2016</strong><br>
+                    Taught evening classes at <a href="http://www.hetperspectief.net">CVO Het Perspectief</a> for two years,
+                    teaching programming with Swift and iOS application development to complete beginners.
                 </p>
             </div>
         </li>
@@ -59,8 +53,7 @@
             <div class="timeline-panel">
                 <p>
                     <strong>October, 2012</strong><br>
-                    Started teaching evening classes at <a href="http://avondschool.be">CVO Panta Rhei</a>.
-                    I taught there for a year, in combination with my day job at <a href="http://www.hogent.be/">HoGent</a>.
+                    Taught evening classes at <a href="http://avondschool.be">CVO Panta Rhei</a> for a year.
                     The main focus of my courses was on Java and Java&nbsp;EE.
                 </p>
             </div>
@@ -141,6 +134,30 @@
         Other activities
     </h1>
     <ul class="timeline">
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/stencil.png" alt="Stencil logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>January, 2018</strong><br>
+                    Wrote a <a href="https://marketplace.visualstudio.com/items?itemName=svanimpe.stencil">Stencil extension for Visual Studio Code</a>.
+                    This includes a TextMate grammar, snippets and indentation rules.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/swift.png" alt="Swift logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>November, 2017</strong><br>
+                    Was invited to <a href="https://developer.ibm.com/swift/2017/11/07/build-a-blog/">guest blog for Swift@IBM</a>
+                    about <a href="https://github.com/svanimpe/swift-blog">Swift Blog</a>.
+                </p>
+            </div>
+        </li>
         <li>
             <div class="timeline-image">
                 <img class="img-fluid rounded-circle" src="/public/img/about/swift.png" alt="Swift logo">
