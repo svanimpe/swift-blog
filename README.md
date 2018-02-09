@@ -37,30 +37,25 @@ swift package generate-xcodeproj
 open swift-blog.xcodeproj
 ```
 
-In Xcode, set the scheme to `swift-blog` and press the play button to run the app.
+In Xcode, edit the `swift-blog-Package` scheme and set the executable to `swift-blog`:
 
-![scheme](https://s1.postimg.org/4cili0n7lb/scheme.png)
+![scheme](https://s9.postimg.org/pk41vx6kf/xcode-edit-scheme.png)
+
+Then make sure "My Mac" is selected as the device and press Run.
 
 You'll need to regenerate the Xcode project any time you change the project's dependencies in `Package.swift`.
 
 ## Developing on Linux
 
-On Linux, I recommend [Visual Studio Code](https://code.visualstudio.com) as an editor. It has extensions for both Swift and Stencil:
+On Linux, I recommend [Visual Studio Code](https://code.visualstudio.com) as an editor. It has basic support for Swift built-in. To run the app in Visual Studio Code, you can use the integrated terminal and execute `swift run` there.
 
-- [Swift for Visual Studio Code](https://marketplace.visualstudio.com/items?itemName=kiadstudios.vscode-swift) adds syntax highlighting and basic autocompletion. Unfortunately, it hasn't been updated for Swift 4 yet.
-- [Django Template](https://marketplace.visualstudio.com/items?itemName=bibhasdn.django-html) adds syntax highlighting for Stencil, as Django and Stencil share the same syntax.
-
-I also recommend you add the following to your settings:
+On both macOS and Linux, I recommend you install my <a href="https://marketplace.visualstudio.com/items?itemName=svanimpe.stencil">Stencil extension for Visual Studio Code</a>. As described in the extension's documentation, you can add the following to your settings if you're using Stencil only for HTML:
 
 ```
 "files.associations": {
-    "*.stencil": "html"
+    "*.stencil": "stencil-html"
 },
 ```
-
-This allows you to use the `.stencil` extension for HTML pages containing Stencil tags.
-
-To run the app, you can use the integrated terminal and execute `swift run` there.
 
 ## Deploying to IBM Cloud (Bluemix)
 
