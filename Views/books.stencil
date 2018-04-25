@@ -10,10 +10,18 @@
 
 {% block subheading %}From zero to overflow{% endblock %}
 
+{% block additional-head %}
+    <style>
+        h2 {
+            clear: both;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-    <h1>Programming with Swift</h1>
+    <h2>Programming with Swift</h2>
     <p>
-        This book is currently in development and targeted for September '18. It will focus on teaching Swift as
+        This book is currently in development and targeted for late '18. It will focus on teaching Swift as
         a general purpose, cross-platform programming language and will target a novice to intermediate audience.
         As such, it should be the ideal textbook for entry-level programming courses.
         The large amount of exercises and challenges makes it suitable for self-learners as well.
@@ -22,10 +30,29 @@
         If you'd like to support the development of this book and get access to early releases,
         please consider <a href="https://www.patreon.com/svanimpe">becoming a patron</a>.
     </p>
-    <h1>Swift Apprentice</h1>
+    <h2>Data Structures &amp; Algorithms in Swift</h2>
+    <p>
+        <a href="https://store.raywenderlich.com/products/data-structures-and-algorithms-in-swift">
+            <img class="float-left mr-3 mb-3" width="150" src="/public/img/books/swift-dna.png" alt="Data Structures and Algorithms in Swift book cover">
+        </a>
+    </p>
+    <p>
+        <a href="https://store.raywenderlich.com/products/data-structures-and-algorithms-in-swift">Data Structures and Algorithms in Swift</a>
+        is my second book as a technical editor for Ray Wenderlich.
+        It covers essential data structures and algorithms, something every programmer should know!
+    </p>
+    <p>
+        This book is up-to-date for Swift 4.
+    </p>
+    <h2>Swift Apprentice</h2>
+    <p>
+        <a href="https://store.raywenderlich.com/products/swift-apprentice">
+            <img class="float-left mr-3 mb-3" width="150" src="/public/img/books/swift-apprentice.png" alt="Swift Apprentice book cover">
+        </a>
+    </p>
     <p>
         The <a href="https://store.raywenderlich.com/products/swift-apprentice">Swift Apprentice</a> is out now,
-        updated and revised for Swift 4! I was the technical editor for the second and third editions of this book.
+        updated and revised for Swift 4. I am the technical editor for the second and third editions of this book.
         This was the first book I've ever worked on and I learned a lot from working with other authors, editors and publishers.
     </p>
 {% endblock %}

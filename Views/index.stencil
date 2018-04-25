@@ -11,7 +11,7 @@
 {% block content %}
     <h2>Latest updates</h2>
     <p>
-        The <a href="https://store.raywenderlich.com/products/swift-apprentice">Swift Apprentice</a> is out now, updated for Swift 4.
+        <a href="https://store.raywenderlich.com/products/data-structures-and-algorithms-in-swift">Data Structures and Algorithms in Swift</a> is out now!
     </p>
     <p>
         For an overview of books I've worked on or am working on, see <a href="/books">Books</a>.<br>
