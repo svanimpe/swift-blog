@@ -1,0 +1,61 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="How to easily install and test macOS Mojave.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        This post describes an easy and safe way to install and test macOS Mojave beta.
+        It uses a feature of the Apple File System, so this technique will only work if you're running macOS High Sierra and are using APFS.
+    </p>
+    <h2 class="section-heading">Creating a volume</h2>
+    <p>
+        Open <strong>Disk Utility</strong> and find the button to add a volume:
+    </p>
+    <p>
+        <img class="img-fluid img-thumbnail" alt="Add an APFS volume" src="/public/img/blog/mojave-beta-1.png">
+    </p>
+    <p>
+        The great thing about APFS volumes (compared to regular partitions) is that they don't require you to erase your entire disk.
+        You don't even need to reserve space for them, as APFS volumes share space and grow as needed.
+    </p>
+    <p>
+        Once you've created a volume, you're ready to download and install macOS Mojave.
+    </p>
+    <h2 class="section-heading">Installing macOS Mojave</h2>
+    <p>
+        Head over to <a href="https://developer.apple.com/download/" target="_blank">https://developer.apple.com/download/</a> and download the latest beta.
+        The installer will take you to the Mac App Store where you'll find the actual installer.
+    </p>
+    <p class="alert alert-info">
+        At the time of writing there's no public beta available yet, so you'll need to sign in with a developer account to get access to the beta.
+    </p>
+    <p>
+        The installer should run after it finishes downloading. When it asks you for a disk to install on, click <strong>Show All Disks...</strong>:
+    </p>
+    <p>
+        <img class="img-fluid img-thumbnail" alt="Show all disks" src="/public/img/blog/mojave-beta-2.png">
+    </p>
+    <p>
+        You should now be able to select your newly created volume and continue the installation process as normal:
+    </p>
+    <p>
+        <img class="img-fluid img-thumbnail" alt="Select disk" src="/public/img/blog/mojave-beta-3.png">
+    </p>
+    <p>
+        When the system reboots, hold the <strong>Alt</strong> (or <strong>Option</strong>) key.
+        This lets you select a volume to boot from.
+        You should see either your volume, or a volume named <strong>macOS installer</strong>.
+        Select that volume to finish the installation process and launch macOS Mojave.
+    </p>
+    <h2 class="section-heading">Cleaning up</h2>
+    <p>
+        To switch back to your main operating system, simply reboot and hold <strong>Alt</strong> (or <strong>Option</strong>) key again.
+        When you're done testing, you can safely delete the volume to reclaim your disk space.
+    </p>
+    <p>
+        Enjoy the dark side!
+    </p>
+{% endblock %}

@@ -1,5 +1,12 @@
 [
     {
+        "name": "mojave-beta",
+        "title": "Join the Dark Side",
+        "subtitle": "Easily install and test macOS Mojave",
+        "background": "bg-mojave",
+        "created": "June 8, 2018"
+    },
+    {
         "name": "swift-blog",
         "title": "Swift Blog",
         "subtitle": "Getting started with Swift on the server",
