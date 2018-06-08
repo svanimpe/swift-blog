@@ -37,9 +37,17 @@ swift package generate-xcodeproj
 open swift-blog.xcodeproj
 ```
 
-In Xcode, edit the `swift-blog-Package` scheme and set the executable to `swift-blog`:
+In Xcode, click on the **swift-blog-Package** scheme:
 
-![scheme](https://s9.postimg.org/pk41vx6kf/xcode-edit-scheme.png)
+![scheme](https://raw.githubusercontent.com/svanimpe/swift-blog/master/public/img/readme/readme-1.png)
+
+Then scroll down the list and select **Edit Scheme...**:
+
+![edit scheme](https://raw.githubusercontent.com/svanimpe/swift-blog/master/public/img/readme/readme-2.png)
+
+Now set the executable to **swift-blog**:
+
+![set executable](https://raw.githubusercontent.com/svanimpe/swift-blog/master/public/img/readme/readme-3.png)
 
 Then make sure "My Mac" is selected as the device and press Run.
 
@@ -57,17 +65,17 @@ On both macOS and Linux, I recommend you install my <a href="https://marketplace
 },
 ```
 
-## Deploying to IBM Cloud (Bluemix)
+## Deploying to IBM Cloud
 
-Hosting Swift apps on IBM Cloud (Bluemix) is extremely easy, thanks to the [Swift buildpack](https://github.com/IBM-Swift/swift-buildpack). Because this app uses very little memory and does not require a database, hosting it is free. An IBM Cloud account includes 256MB of memory for free per month. You can increase this to 512MB by adding a credit card and upgrading to a pay-as-you-go account.
+Hosting Swift apps on IBM Cloud is extremely easy, thanks to the [Swift buildpack](https://github.com/IBM-Swift/swift-buildpack). Because this app uses very little memory and does not require a database, hosting it is free. An IBM Cloud account includes 256MB of memory for free per month. You can increase this to 512MB by adding a credit card and upgrading to a pay-as-you-go account.
 
 If you don't yet have an IBM Cloud account, sign up for free at [https://console.bluemix.net/](https://console.bluemix.net/). When configuring your account, choose the region where you'd like to host your app and create an organization and space.
 
-Next, download the Bluemix [command-line tools](https://console.bluemix.net/docs/cli/index.html). Once you have them installed, run the following commands to configure them:
+Next, download the [IBM Cloud Developer Tools](https://console.bluemix.net/docs/cli/index.html). Once you have them installed, run the following commands to configure them:
 
 ```
-bx login
-bx target -o <organization> -s <space>
+ibmcloud login
+ibmcloud target -o <organization> -s <space>
 ```
 
 The first command will ask you for your IBM Cloud credentials. For the second command, replace `<organization>` and `<space>` with the appropriate values.
@@ -82,12 +90,12 @@ applications:
   command: swift-blog
 ```
 
-These settings tell Bluemix to use the Swift buildpack, how much memory to allocate, which command to run and what to call your app. Simply replace `svanimpe` with the name of your app and you're good to go.
+These settings tell IBM Cloud to use the Swift buildpack, how much memory to allocate, which command to run and what to call your app. Simply replace `svanimpe` with the name of your app and you're good to go.
 
 Finally, run:
 
 ```
-bx app push
+ibmcloud app push
 ```
 
 This will deploy your app using the settings in `manifest.yml`. The output of this command contains the URL where your app is available.
@@ -98,7 +106,7 @@ To monitor your app or change its settings, use either the command-line tools or
 
 If you've purchased a domain name and would like to use this domain for your app, follow these steps.
 
-First, go to the website of your registrar (the company where you've purchased the domain name) and find the page where you can configure the DNS records for your domain. Here, you need to add an **A-record** to point the domain at Bluemix's servers. The IP address you need to use depends on the region where your app is hosted:
+First, go to the website of your registrar (the company where you've purchased the domain name) and find the page where you can configure the DNS records for your domain. Here, you need to add an **A-record** to point the domain at IBM's servers. The IP address you need to use depends on the region where your app is hosted:
 
 - **US-SOUTH**: 158.85.156.20 (secure.us-south.bluemix.net)
 - **EU-GB**: 5.10.124.142 (secure.eu-gb.bluemix.net)
