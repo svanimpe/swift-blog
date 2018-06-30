@@ -115,7 +115,7 @@ First, go to the website of your registrar (the company where you've purchased t
 
 If you want to configure additional subdomains, you can use either A-records or CNAME-records, but at least one A-record is required.
 
-Next, add the domain to your IBM Cloud account. On the [web console](https://console.bluemix.net/), go to **Manage** > **Account** > **Organizations** > **View Details** > **Edit Cloud Foundry Org** > **Domains**. Here you can add your domain. If you've purchased an SSL certificate, you can upload it here as well.
+Next, add the domain to your IBM Cloud account. On the [web console](https://console.bluemix.net/), go to **Manage** > **Account** > **Cloud Foundry Orgs** > **...** > **Domains**. Here you can add your domain. If you've purchased an SSL certificate, you can upload it here as well.
 
 Finally, configure the routes for your app. On the dashboard for your app, go to **Routes** > **Edit routes** and add the routes you'd like to use.
 
