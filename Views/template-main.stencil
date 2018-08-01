@@ -2,7 +2,7 @@
 
 {% block additional-head %}
     <style>
-        hr {
+        .site-heading hr {
             border-top: 1px solid #eee !important;
         }
     </style>

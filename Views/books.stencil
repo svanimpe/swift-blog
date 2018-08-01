@@ -10,7 +10,7 @@
 
 {% block subheading %}From zero to overflow{% endblock %}
 
-{% block additional-head %}
+{% block even-more-head %}
     <style>
         h2 {
             clear: both;
