@@ -16,6 +16,7 @@
     <p>
         For an overview of books I've worked on or am working on, see <a href="/books">Books</a>.<br>
         For shorter articles, see <a href="/blog">Blog</a>.<br>
-        If you have no idea who I am, see <a href="/about">About</a>.
+        If you have no idea who I am, see <a href="/about">About</a>.<br>
+        To support my work, consider <a href="https://www.patreon.com/svanimpe">becoming a patron</a>.
     </p>
 {% endblock %}

@@ -21,10 +21,10 @@
 {% block content %}
     <h2>Programming with Swift</h2>
     <p>
-        This book is currently in development and targeted for late '18. It will focus on teaching Swift as
+        This book is currently in development and targeted for early '19. It will focus on teaching Swift as
         a general purpose, cross-platform programming language and will target a novice to intermediate audience.
         As such, it should be the ideal textbook for entry-level programming courses.
-        The large amount of exercises and challenges makes it suitable for self-learners as well.
+        A large amount of exercises and challenges makes it suitable for self-learners as well.
     </p>
     <p>
         If you'd like to support the development of this book and get access to early releases,
