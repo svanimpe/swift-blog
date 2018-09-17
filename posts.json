@@ -1,5 +1,12 @@
 [
     {
+        "name": "around-the-table",
+        "title": "Around The Table",
+        "subtitle": "A server-side Swift project",
+        "background": "bg-swift",
+        "created": "September 17, 2018"
+    },
+    {
         "name": "mojave-beta",
         "title": "Join the Dark Side",
         "subtitle": "Easily install and test macOS Mojave",
@@ -11,7 +18,8 @@
         "title": "Swift Blog",
         "subtitle": "Getting started with Swift on the server",
         "background": "bg-swift",
-        "created": "November 6, 2017"
+        "created": "November 6, 2017",
+        "updated": "September 17, 2018"
     },
     {
         "name": "html-decoding",

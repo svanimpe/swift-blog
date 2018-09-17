@@ -1,0 +1,100 @@
+{% extends "template-blog.stencil" %}
+
+{% block description %}
+    <meta name="description" content="A server-side Swift project using Kitura and Stencil.">
+{% endblock %}
+
+{% block post-content %}
+    <h2 class="section-heading">Introduction</h2>
+    <p>
+        After a year and a half of development, a rewrite and and several refactorings, I'm happy to announce that
+        <a href="https://github.com/svanimpe/around-the-table">Around The Table</a>
+        is now open source and documented!
+    </p>
+    <p>
+        Around The Table is an open source platform that supports tabletop gaming communities.
+        Players can use it to host games and connect with other players in their area.
+    </p>
+    <img class="img-fluid img-thumbnail" src="/public/img/blog/around-the-table.png" alt="Screenshot">
+    <p>
+        This project started out as experiment with server-side Swift.
+        My initial goal was to find out if a framework like <a href="http://www.kitura.io">Kitura</a>,
+        together with a templating language like <a href="https://stencil.fuller.li/">Stencil</a>,
+        could be used to build a web application that uses little to no JavaScript.
+    </p>
+    <p>
+        The answer was a resounding yes and the project grew from an experiment to a product with a growing user base
+        and feature set.
+    </p>
+    <p>
+        I decided to stick with the server-side architecture to show that server-side Swift
+        is not just about building back-ends for mobile apps and showcase its potential to build web applications.
+    </p>
+    <p>
+        By open sourcing this project under a permissive license, I hope to see my code used to kickstart many other
+        server-side Swift projects.
+    </p>
+    <h2 class="section-heading">Features</h2>
+    <p>
+        This project demonstrates the following:
+    </p>
+    <ul>
+        <li>Kitura:
+            <ul>
+                <li>Basic routing.</li>
+                <li>Structured routing using subrouters and extensions.</li>
+                <li>Type-safe form parsing using Codable forms.</li>
+                <li>Type-safe rendering using Codable view models.</li>
+                <li>Using the Session middleware to store credentials and preferences.</li>
+                <li>Using the Credentials middleware.</li>
+                <li>Authentication using Facebook Web Login.</li>
+                <li>Authentication using an email address and password.</li>
+            </ul>
+        </li>
+        <li>
+            Stencil:
+            <ul>
+                <li>Creating and rendering Stencil templates.</li>
+                <li>Template inheritance using <code>&#123;% extends %}</code>.</li>
+                <li>Template composition using <code>&#123;% include %}</code>.</li>
+                <li>Creating custom Stencil filters.</li>
+            </ul>
+        </li>
+        <li>
+            Persistence:
+            <ul>
+                <li>Implementing a persistence layer using MongoDB and MongoKitten.</li>
+            </ul>
+        </li>
+        <li>
+            Configuration:
+            <ul>
+                <li>Using JSON files to configure settings.</li>
+                <li>Using environment variables to configure settings and secrets.</li> 
+                <li>Using the Configuration package to load settings and cloud services.</li>
+            </ul>
+        </li>
+        <li>
+            Testing:
+            <ul>
+                <li>Unit testing with XCTest.</li>
+                <li>End-to-end testing with SwiftyRequest.</li>
+                <li>Testing on Linux using Docker.</li>
+            </ul>
+        </li>
+        <li>
+            Other:
+            <ul>
+                <li>Deploying to IBM Cloud.</li>
+                <li>Caching images in Cloud Object Storage.</li>
+                <li>Calling external APIs using SwiftyRequest.</li>
+                <li>Parsing XML using Foundation.</li>
+                <li>Basic internationalisation using localized strings and templates.</li>
+            </ul>
+        </li>
+    </ul>
+    <h2 class="section-heading">Source code</h2>
+    <p>
+        For more information, see the repository on <a href="https://github.com/svanimpe/around-the-table">GitHub</a>.
+    </p>
+{% endblock %}

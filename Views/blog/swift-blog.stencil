@@ -9,7 +9,7 @@
     <p>
         This past year, I have spent quite some time experimenting with server-side Swift,
         trying to find out how far I could take it, how easy it is to use and how well it performs.
-        These experiments turned into a larger project, one that I hope to release by the end of the year.
+        These experiments turned into a larger project, one that I hope to release sometime next year.
         While that project will become my main example of server-side Swift,
         I want to start with something smaller and more approachable.
         To that end, I have rewritten this website in Swift.
