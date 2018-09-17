@@ -136,6 +136,30 @@
     <ul class="timeline">
         <li>
             <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/swift.png" alt="Swift logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>September, 2018</strong><br>
+                    Gave a talk on building server-side web apps with Kitura and Stencil at the 2018
+                    <a href="https://www.serversideswift.info">server-side Swift conference</a>.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
+                <img class="img-fluid rounded-circle" src="/public/img/about/swift.png" alt="Swift logo">
+            </div>
+            <div class="timeline-panel">
+                <p>
+                    <strong>September, 2018</strong><br>
+                    Taught a workshop on building server-side web apps with Kitura and Stencil at the 2018
+                    <a href="https://www.serversideswift.info">server-side Swift conference</a>.
+                </p>
+            </div>
+        </li>
+        <li>
+            <div class="timeline-image">
                 <img class="img-fluid rounded-circle" src="/public/img/about/stencil.png" alt="Stencil logo">
             </div>
             <div class="timeline-panel">
