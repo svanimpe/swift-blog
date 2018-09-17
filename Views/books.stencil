@@ -42,7 +42,7 @@
         It covers essential data structures and algorithms, something every programmer should know!
     </p>
     <p>
-        This book is up-to-date for Swift 4.
+        This book is up-to-date for Swift 4.2.
     </p>
     <h2>Swift Apprentice</h2>
     <p>
@@ -52,7 +52,7 @@
     </p>
     <p>
         The <a href="https://store.raywenderlich.com/products/swift-apprentice">Swift Apprentice</a> is out now,
-        updated and revised for Swift 4. I am the technical editor for the second and third editions of this book.
+        updated and revised for Swift 4.2. I am the technical editor for the second and third editions of this book.
         This was the first book I've ever worked on and I learned a lot from working with other authors, editors and publishers.
     </p>
 {% endblock %}
