@@ -6,7 +6,8 @@
 
 {% block title %}{{ block.super }} - About the author{% endblock %}
 
-{% block even-more-head %}
+{% block additional-head %}
+    {{ block.super }}
     <link href="/public/css/timeline.css" rel="stylesheet">
 {% endblock %}
 

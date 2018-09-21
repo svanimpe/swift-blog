@@ -6,7 +6,6 @@
             border-top: 1px solid #eee !important;
         }
     </style>
-    {% block even-more-head %}{% endblock %}
 {% endblock %}
 
 {% block header %}

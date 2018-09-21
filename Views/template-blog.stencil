@@ -12,7 +12,6 @@
             font-size: 90%;
         }
     </style>
-    {% block even-more-head %}{% endblock %}
 {% endblock %}
 
 {% block header %}
@@ -52,5 +51,4 @@
 {% block additional-body %}
     <script src="/public/js/highlight.pack.js"></script>
     <script>hljs.initHighlightingOnLoad();</script>
-    {% block even-more-body %}{% endblock %}
 {% endblock %}
