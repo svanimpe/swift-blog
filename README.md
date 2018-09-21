@@ -43,7 +43,7 @@ You'll need to regenerate the Xcode project any time you change the project's de
 
 On Linux, I recommend [Visual Studio Code](https://code.visualstudio.com) as an editor. It has basic support for Swift built-in. To run the app in Visual Studio Code, you can use the integrated terminal and execute `swift run` there.
 
-On both macOS and Linux, I recommend you install my <a href="https://marketplace.visualstudio.com/items?itemName=svanimpe.stencil">Stencil extension for Visual Studio Code</a>. As described in the extension's documentation, you can add the following to your settings if you're using Stencil only for HTML:
+On both macOS and Linux, I recommend you install my <a href="https://marketplace.visualstudio.com/items?itemName=svanimpe.stencil">Stencil extension for Visual Studio Code</a>. As described in the extension's documentation, press **F1**, select **Open Settings (JSON)** and add the following to your settings if you're using Stencil only for HTML:
 
 ```
 "files.associations": {
