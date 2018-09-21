@@ -1,4 +1,4 @@
-struct BlogPost: Decodable {
+struct BlogPost: Codable {
 
     let name: String
     let title: String

@@ -16,7 +16,7 @@ To keep the app as simple as possible, I did not use a database. Instead, the li
 
 ## Deploying locally
 
-The only requirement to build and run this app is Swift 4. On macOS, install Xcode 9 through the Mac App Store and launch it at least once to complete the installation process. On Linux, get it from [swift.org](https://swift.org/getting-started/). After installing Swift 4, verify it's working properly by executing `swift --version` on the command line.
+The only requirement to build and run this app is Swift 4.2. On macOS, install Xcode 10 through the Mac App Store and launch it at least once to complete the installation process. On Linux, get it from [swift.org](https://swift.org/getting-started/). After installing Swift 4, verify it's working properly by executing `swift --version` on the command line.
 
 You can now download, build and run the app as follows:
 
@@ -36,20 +36,6 @@ You can use the following commands to create and open an Xcode project:
 swift package generate-xcodeproj
 open swift-blog.xcodeproj
 ```
-
-In Xcode, click on the **swift-blog-Package** scheme:
-
-![scheme](https://raw.githubusercontent.com/svanimpe/swift-blog/master/public/img/readme/readme-1.png)
-
-Then scroll down the list and select **Edit Scheme...**:
-
-![edit scheme](https://raw.githubusercontent.com/svanimpe/swift-blog/master/public/img/readme/readme-2.png)
-
-Now set the executable to **swift-blog**:
-
-![set executable](https://raw.githubusercontent.com/svanimpe/swift-blog/master/public/img/readme/readme-3.png)
-
-Then make sure "My Mac" is selected as the device and press Run.
 
 You'll need to regenerate the Xcode project any time you change the project's dependencies in `Package.swift`.
 

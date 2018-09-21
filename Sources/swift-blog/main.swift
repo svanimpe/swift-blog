@@ -18,7 +18,7 @@ private let blogPosts: [BlogPost] = {
 private let router = Router()
 router.setDefault(templateEngine: StencilTemplateEngine())
 
-router.all("/public", middleware: StaticFileServer())
+router.all("public", middleware: StaticFileServer())
 
 router.get("/") {
     request, response, next in
@@ -26,25 +26,25 @@ router.get("/") {
     next()
 }
 
-router.get("/books") {
+router.get("books") {
     request, response, next in
     try response.render("books", context: [:])
     next()
 }
 
-router.get("/about") {
+router.get("about") {
     request, response, next in
     try response.render("about", context: [:])
     next()
 }
 
-router.get("/blog") {
+router.get("blog") {
     request, response, next in
-    try response.render("blog", context: ["posts": blogPosts])
+    try response.render("blog", with: blogPosts, forKey: "posts")
     next()
 }
 
-router.get("/blog/:name") {
+router.get("blog/:name") {
     request, response, next in
     let name = request.parameters["name"]!
     guard !name.hasSuffix(".html") else {
@@ -61,7 +61,7 @@ router.get("/blog/:name") {
         response.statusCode = .notFound
         return next()
     }
-    try response.render("blog/\(name)", context: ["post": post])
+    try response.render("blog/\(name)", with: post, forKey: "post")
     next()
 }
 
