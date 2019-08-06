@@ -1,5 +1,6 @@
 applications:
 - name: svanimpe
   memory: 128M
-  buildpack: swift_buildpack
+  buildpacks:
+    - swift_buildpack
   command: swift-blog
