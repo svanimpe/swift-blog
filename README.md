@@ -1,6 +1,6 @@
 # A Swift Blog
 
-This repository hosts the source code for my [personal website and blog](http://svanimpe.be). Instead of using a CMS, I decided to write my own solution in Swift and make it available to the community. As this is my first server-side Swift release, I did not go all out on features but tried to keep the code small, approachable and easy to understand.
+This repository hosts the source code that I used for a personal website and blog. Instead of using a CMS, I decided to write my own solution in Swift and make it available to the community. As this is my first server-side Swift release, I did not go all out on features but tried to keep the code small, approachable and easy to understand.
 
 ## How it works
 
@@ -105,7 +105,7 @@ Next, add the domain to your IBM Cloud account. On the [web console](https://con
 
 Finally, configure the routes for your app. On the dashboard for your app, go to **Routes** > **Edit routes** and add the routes you'd like to use.
 
-For example, my domain [svanimpe.be](http://svanimpe.be) is configured using the following A-records:
+For example, I used the following A-records:
 
 - [svanimpe.be](http://svanimpe.be) -> 5.10.124.142
 - [www.svanimpe.be](http://svanimpe.be) -> 5.10.124.142
@@ -117,7 +117,3 @@ After adding this domain to my account, I set up the following routes for my app
 - [www.svanimpe.be](http://svanimpe.be)
 
 Note that changes to DNS records require some time to take effect, so wait at least a day before assuming you've made a mistake.
-
-## Show your support
-
-If you've enjoyed my work or found it helpful, please consider <a href="https://www.patreon.com/svanimpe">becoming a patron</a>. Your support helps me free up time to work on my books and projects.
